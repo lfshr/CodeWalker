@@ -106,6 +106,9 @@ namespace CodeWalker.GameFiles
 
         public YftFile Yft { get; set; }
 
+#if DEBUG
+        public ResourceAnalyzer Analyzer { get; set; }
+#endif
 
         public override void Read(ResourceDataReader reader, params object[] parameters)
         {
@@ -195,8 +198,11 @@ namespace CodeWalker.GameFiles
 
 
             AssignChildrenShaders();
+            AssignGlassWindowsGroups();
 
-
+#if DEBUG
+            Analyzer = new ResourceAnalyzer(reader);
+#endif
 
             ////just testing!!
             //if (BoundingSphereRadius <= 0.0f)
@@ -303,8 +309,6 @@ namespace CodeWalker.GameFiles
             //    default:
             //        break;//no hit
             //}
-
-
         }
         public override void Write(ResourceDataWriter writer, params object[] parameters)
         {
@@ -395,7 +399,9 @@ namespace CodeWalker.GameFiles
                     var d = DrawableArray.data_items[i];
                     var name = (i < (danames?.Length ?? 0)) ? danames[i] : null;
                     if (d.Name != name.Value)
-                    { }
+                    {
+                        d.Name = name.Value;
+                    }
                     FragDrawable.WriteXmlNode(d, sb, indent + 1, ddsfolder, "Item");
                 }
                 YftXml.CloseTag(sb, indent, "DrawableArray");
@@ -536,7 +542,7 @@ namespace CodeWalker.GameFiles
             AssignChildrenSkeletonsAndBounds();
             AssignChildrenShaders();
 
-            FileUnknown = 1;
+            FileVFT = 1079456040;
         }
         public static void WriteXmlNode(FragType f, StringBuilder sb, int indent, string ddsfolder, string name = "Fragment")
         {
@@ -611,6 +617,17 @@ namespace CodeWalker.GameFiles
             assign(PhysicsLODGroup.PhysicsLOD2);
             assign(PhysicsLODGroup.PhysicsLOD3);
 
+
+
+            if (DrawableArray?.data_items != null)
+            {
+                foreach (var arrd in DrawableArray.data_items)
+                {
+                    assigndr(arrd, null, 0);
+                }
+            }
+
+
         }
 
         public void AssignChildrenSkeletonsAndBounds()
@@ -650,6 +667,54 @@ namespace CodeWalker.GameFiles
 
         }
 
+        public void AssignGlassWindowsGroups()
+        {
+
+            void assign(FragPhysicsLOD lod)
+            {
+                if (lod?.Groups?.data_items == null) return;
+                foreach (var grp in lod.Groups.data_items)
+                {
+                    var windx = grp.UnkByte52;
+                    var flags = grp.UnkByte53;
+                    if ((flags & 2) > 0)
+                    {
+                        if (GlassWindows?.data_items != null)
+                        {
+                            if (windx < GlassWindows.data_items.Length)
+                            {
+                                var wind = GlassWindows.data_items[windx];
+                                wind.Group = grp;
+                                wind.GroupLOD = lod;
+                            }
+                        }
+                    }
+                }
+            }
+            assign(PhysicsLODGroup?.PhysicsLOD1);
+            assign(PhysicsLODGroup?.PhysicsLOD2);
+            assign(PhysicsLODGroup?.PhysicsLOD3);
+
+            //if (VehicleGlassWindows?.Windows != null)
+            //{
+            //    var groups = PhysicsLODGroup?.PhysicsLOD1?.Groups?.data_items;
+            //    if (groups != null)
+            //    {
+            //        var groupdict = new Dictionary<int, FragPhysTypeGroup>();
+            //        foreach (var grp in groups)
+            //        {
+            //            groupdict[grp.Index] = grp;
+            //        }
+            //        foreach (var wind in VehicleGlassWindows.Windows)
+            //        {
+            //            groupdict.TryGetValue(wind.ItemID, out var grp);
+            //            wind.Group = grp;
+            //            wind.GroupLOD = PhysicsLODGroup.PhysicsLOD1;
+            //        }
+            //    }
+            //}
+
+        }
 
 
         public override IResourceBlock[] GetReferences()
@@ -908,6 +973,7 @@ namespace CodeWalker.GameFiles
                     matinds.Add(id);
                     mats.Add(mat);
                 }
+                FragMatricesCount = (ushort)mats.Count;
                 for (int i = mats.Count; i < cap; i++)
                 {
                     matinds.Add(0);
@@ -924,6 +990,8 @@ namespace CodeWalker.GameFiles
             {
                 Bound = Bounds.ReadXmlNode(bnode, this);
             }
+
+            FileVFT = 1080060872;
         }
         public static void WriteXmlNode(FragDrawable d, StringBuilder sb, int indent, string ddsfolder, string name = "FragDrawable")
         {
@@ -1094,6 +1162,10 @@ namespace CodeWalker.GameFiles
         public float UnkFloat22 { get; set; }
         public uint UnkUint4 = 0x7f800001; // 0x7f800001
 
+        public byte FlagsLo { get { return (byte)((Flags >> 0) & 0xFF); } }
+        public byte FlagsHi { get { return (byte)((Flags >> 8) & 0xFF); } }
+        public FragPhysTypeGroup Group { get; set; }
+        public FragPhysicsLOD GroupLOD { get; set; }
 
         public override void Read(ResourceDataReader reader, params object[] parameters)
         {
@@ -1821,6 +1893,23 @@ namespace CodeWalker.GameFiles
 
             }
 
+            public int GetValue(int x)
+            {
+                if (x < 0) return -1;
+                if (Data1 != null)
+                {
+                    if (x < Start1) return -1;
+                    var cpos = x - Start1;
+                    if (cpos < Data1.Length) return Data1[cpos];
+                }
+                if (Data2 != null)
+                {
+                    if (x < Start2) return 256;
+                    var cpos = x - Start2;
+                    if (cpos < Data2.Length) return Data2[cpos];
+                }
+                return -1;
+            }
 
             public override string ToString()
             {
@@ -2005,7 +2094,7 @@ namespace CodeWalker.GameFiles
         }
 
         // structure data
-        public uint VFT { get; set; }
+        public uint VFT { get; set; } = 1080055472;
         public uint Unknown_04h = 1; // 0x00000001
         public ulong Unknown_08h; // 0x0000000000000000
         public ulong PhysicsLOD1Pointer { get; set; }
@@ -2118,7 +2207,7 @@ namespace CodeWalker.GameFiles
         }
 
         // structure data
-        public uint VFT { get; set; }
+        public uint VFT { get; set; } = 1080055512;
         public uint Unknown_04h = 1; // 0x00000001
         public ulong Unknown_08h; // 0x0000000000000000
         public uint Unknown_10h; // 0x00000000
@@ -2170,7 +2259,7 @@ namespace CodeWalker.GameFiles
         // reference data
         public FragPhysArticulatedBodyType ArticulatedBodyType { get; set; }
         public float[] ChildrenUnkFloats { get; set; }
-        public ResourcePointerArray64_s<FragPhysNameStruct_s> GroupNames { get; set; }
+        public FragPhysGroupNamesBlock GroupNames { get; set; }
         public ResourcePointerArray64<FragPhysTypeGroup> Groups { get; set; }
         public ResourcePointerArray64<FragPhysTypeChild> Children { get; set; }
         public FragPhysArchetype Archetype1 { get; set; }
@@ -2245,8 +2334,8 @@ namespace CodeWalker.GameFiles
             // read reference data
             this.ArticulatedBodyType = reader.ReadBlockAt<FragPhysArticulatedBodyType>(this.ArticulatedBodyTypePointer);
             this.ChildrenUnkFloats = reader.ReadFloatsAt(this.ChildrenUnkFloatsPointer, this.ChildrenCount);
-            this.GroupNames = reader.ReadBlockAt<ResourcePointerArray64_s<FragPhysNameStruct_s>>(this.GroupNamesPointer, this.GroupsCount);
             this.Groups = reader.ReadBlockAt<ResourcePointerArray64<FragPhysTypeGroup>>(this.GroupsPointer, this.GroupsCount);
+            this.GroupNames = reader.ReadBlockAt<FragPhysGroupNamesBlock>(this.GroupNamesPointer, this.GroupsCount, this.Groups?.data_items);
             this.Children = reader.ReadBlockAt<ResourcePointerArray64<FragPhysTypeChild>>(this.ChildrenPointer, this.ChildrenCount);
             this.Archetype1 = reader.ReadBlockAt<FragPhysArchetype>(this.Archetype1Pointer);
             this.Archetype2 = reader.ReadBlockAt<FragPhysArchetype>(this.Archetype2Pointer);
@@ -2369,8 +2458,6 @@ namespace CodeWalker.GameFiles
         }
         public override void Write(ResourceDataWriter writer, params object[] parameters)
         {
-            BuildGroupsData();
-
             // update structure data
             this.ArticulatedBodyTypePointer = (ulong)(this.ArticulatedBodyType != null ? this.ArticulatedBodyType.FilePosition : 0);
             this.ChildrenUnkFloatsPointer = (ulong)(this.ChildrenUnkFloatsBlock != null ? this.ChildrenUnkFloatsBlock.FilePosition : 0);
@@ -2391,16 +2478,6 @@ namespace CodeWalker.GameFiles
             this.GroupsCount = (byte)(this.Groups != null ? this.Groups.Count : 0);
             this.ChildrenCount = (byte)(this.Children != null ? this.Children.Count : 0);
             this.ChildrenCount2 = this.ChildrenCount;
-
-            if ((Groups?.data_items != null) && (GroupNames != null))
-            {
-                var gnplist = new List<ulong>();
-                foreach (var grp in Groups?.data_items)
-                {
-                    gnplist.Add((ulong)grp.FilePosition + 128);//manually write group names pointers as offsets to the groups
-                }
-                GroupNames.data_pointers = gnplist.ToArray();
-            }
 
 
             // write structure data
@@ -2656,8 +2733,9 @@ namespace CodeWalker.GameFiles
 
             if (grpnames.Count > 0)
             {
-                if (GroupNames == null) GroupNames = new ResourcePointerArray64_s<FragPhysNameStruct_s>();
+                if (GroupNames == null) GroupNames = new FragPhysGroupNamesBlock();
                 GroupNames.data_items = grpnames.ToArray();
+                GroupNames.Groups = Groups?.data_items;
             }
             else
             {
@@ -2704,7 +2782,6 @@ namespace CodeWalker.GameFiles
             }
             if (GroupNames != null)
             {
-                GroupNames.ManualPointerOverride = (Groups != null); //we'll just write a set of pointers into the Groups
                 list.Add(GroupNames);
             }
             return list.ToArray();
@@ -2719,7 +2796,7 @@ namespace CodeWalker.GameFiles
         }
 
         // structure data
-        public uint VFT { get; set; }
+        public uint VFT { get; set; } = 1080211704;
         public uint Unknown_04h = 1; // 0x00000001
         public ulong Unknown_08h; // 0x0000000000000000
         public uint[] ItemIndices { get; set; } // array of 22 uints
@@ -3068,6 +3145,8 @@ namespace CodeWalker.GameFiles
             Unknown_80h = Xml.GetChildVector4Attributes(node, "Unknown80");
             Unknown_90h = Xml.GetChildVector4Attributes(node, "Unknown90");
             Unknown_A0h = Xml.GetChildVector4Attributes(node, "UnknownA0");
+
+            VFT = 1080212656;
         }
     }
     [TypeConverter(typeof(ExpandableObjectConverter))] public class FragPhysJoint3DofType : FragPhysJointType
@@ -3191,6 +3270,8 @@ namespace CodeWalker.GameFiles
             //Unknown_C0h = Xml.GetChildVector4Attributes(node, "UnknownC0");
             //Unknown_D0h = Xml.GetChildVector4Attributes(node, "UnknownD0");
             //Unknown_E0h = Xml.GetChildVector4Attributes(node, "UnknownE0");
+
+            VFT = 1080212544;
         }
     }
 
@@ -3202,7 +3283,7 @@ namespace CodeWalker.GameFiles
         }
 
         // structure data
-        public uint VFT { get; set; }
+        public uint VFT { get; set; } = 1080043536;
         public uint Unknown_04h = 1; // 0x00000001
         public ulong Unknown_08h; // 0x0000000000000000
         public uint MatricesCount { get; set; }
@@ -3277,7 +3358,7 @@ namespace CodeWalker.GameFiles
         }
 
         // structure data
-        public uint VFT { get; set; }
+        public uint VFT { get; set; } = 1080215944;
         public uint Unknown_04h = 1; // 0x00000001
         public ulong Unknown_08h; // 0x0000000000000000
         public ulong Unknown_10h = 2; // 0x0000000000000002
@@ -3550,7 +3631,7 @@ namespace CodeWalker.GameFiles
         }
 
         // structure data
-        public uint VFT { get; set; }
+        public uint VFT { get; set; } = 1080061712;
         public uint Unknown_04h = 1; // 0x00000001
         public float Mass1 { get; set; }
         public float Mass2 { get; set; }
@@ -3837,7 +3918,7 @@ namespace CodeWalker.GameFiles
         }
 
         // structure data
-        public uint VFT { get; set; }
+        public uint VFT { get; set; } = 1080060072;
         public uint Unknown_04h = 1; // 0x00000001
         public ulong Unknown_08h; // 0x0000000000000000
         public ulong Unknown_10h; // 0x0000000000000000
@@ -3922,8 +4003,8 @@ namespace CodeWalker.GameFiles
         public byte UnkByte4F { get; set; }
         public byte UnkByte50 { get; set; }
         public byte UnkByte51 { get; set; } = 255; //0xFF
-        public byte UnkByte52 { get; set; }
-        public byte UnkByte53 { get; set; }
+        public byte UnkByte52 { get; set; }//GlassWindows index
+        public byte UnkByte53 { get; set; }//flags: 1=?, 2=glass, 4=?, ...
         public float UnkFloat54 { get; set; }
         public float UnkFloat58 { get; set; }
         public float UnkFloat5C { get; set; }
@@ -4184,6 +4265,108 @@ namespace CodeWalker.GameFiles
         public override string ToString()
         {
             return Name.ToString();
+        }
+
+    }
+
+    [TypeConverter(typeof(ExpandableObjectConverter))] public class FragPhysGroupNamesBlock : ResourceSystemBlock
+    {
+
+        public override long BlockLength
+        {
+            get { return (data_items?.Length ?? 0) * 8 + 8; }
+        }
+
+
+        public ulong[] data_pointers { get; set; }
+        public FragPhysNameStruct_s[] data_items { get; set; }
+
+        public uint UnkVFT { get; set; } = 1095046985;
+        public uint UnkUint1 { get; set; } = 1;
+
+
+        public FragPhysTypeGroup[] Groups;//for writing purposes
+
+
+
+        public override void Read(ResourceDataReader reader, params object[] parameters)
+        {
+            int numElements = Convert.ToInt32(parameters[0]);
+            Groups = parameters[1] as FragPhysTypeGroup[];
+
+            data_pointers = new ulong[numElements];
+            for (int i = 0; i < numElements; i++)
+            {
+                data_pointers[i] = reader.ReadUInt64();
+            }
+
+            UnkVFT = reader.ReadUInt32();
+            UnkUint1 = reader.ReadUInt32();
+
+            //switch (UnkVFT)
+            //{
+            //    case 1095030569:
+            //    case 1080035264:
+            //    case 1080043424:
+            //    case 1080043456:
+            //    case 1079473328:
+            //    case 1079970608:
+            //    case 1079970704:
+            //    case 1079985584:
+            //    case 1079976016:
+            //    case 1080043488:
+            //    case 1079992976:
+            //    case 1095046985:
+            //    case 1095046905:
+            //        break;
+            //    default:
+            //        break;//no hit
+            //}
+            //switch (UnkUint1)
+            //{
+            //    case 1:
+            //        break;
+            //    default:
+            //        break;//no hit
+            //}
+
+            data_items = new FragPhysNameStruct_s[numElements];
+            for (int i = 0; i < numElements; i++)
+            {
+                data_items[i] = reader.ReadStructAt<FragPhysNameStruct_s>((long)data_pointers[i]);
+            }
+
+        }
+
+        public override void Write(ResourceDataWriter writer, params object[] parameters)
+        {
+
+
+            var gnplist = new List<ulong>();
+            foreach (var grp in Groups)
+            {
+                gnplist.Add((ulong)grp.FilePosition + 128);//manually write group names pointers as offsets to the groups
+            }
+            data_pointers = gnplist.ToArray();
+
+
+
+            foreach (var x in data_pointers)
+            {
+                writer.Write(x);
+            }
+
+            writer.Write(UnkVFT);
+            writer.Write(UnkUint1);
+
+        }
+
+
+
+
+        public override string ToString()
+        {
+            return "(Count: " + ((data_items != null) ? data_items.Length : 0).ToString() + ")";
         }
 
     }

@@ -47,6 +47,7 @@ namespace CodeWalker.GameFiles
         public Dictionary<uint, RpfFileEntry> YftDict { get; private set; }
         public Dictionary<uint, RpfFileEntry> YbnDict { get; private set; }
         public Dictionary<uint, RpfFileEntry> YcdDict { get; private set; }
+        public Dictionary<uint, RpfFileEntry> YedDict { get; private set; }
         public Dictionary<uint, RpfFileEntry> YnvDict { get; private set; }
         public Dictionary<uint, RpfFileEntry> Gxt2Dict { get; private set; }
 
@@ -180,11 +181,13 @@ namespace CodeWalker.GameFiles
                 //RE test area!
                 //TestAudioRels();
                 //TestAudioYmts();
+                //TestAudioAwcs();
                 //TestMetas();
                 //TestPsos();
                 //TestRbfs();
                 //TestCuts();
                 //TestYlds();
+                //TestYeds();
                 //TestYcds();
                 //TestYtds();
                 //TestYbns();
@@ -192,9 +195,13 @@ namespace CodeWalker.GameFiles
                 //TestYdds();
                 //TestYfts();
                 //TestYpts();
+                //TestYnvs();
                 //TestYmaps();
                 //TestPlacements();
                 //TestDrawables();
+                //TestHeightmaps();
+                //TestWatermaps();
+                //GetShadersXml();
                 //GetArchetypeTimesList();
                 //string typestr = PsoTypes.GetTypesString();
             }
@@ -923,6 +930,7 @@ namespace CodeWalker.GameFiles
             YtdDict = new Dictionary<uint, RpfFileEntry>();
             YftDict = new Dictionary<uint, RpfFileEntry>();
             YcdDict = new Dictionary<uint, RpfFileEntry>();
+            YedDict = new Dictionary<uint, RpfFileEntry>();
             foreach (var rpffile in AllRpfs)
             {
                 if (rpffile.AllEntries == null) continue;
@@ -955,6 +963,11 @@ namespace CodeWalker.GameFiles
                         {
                             YcdDict[entry.NameHash] = fentry;
                             YcdDict[entry.ShortNameHash] = fentry;
+                        }
+                        else if (entry.NameLower.EndsWith(".yed"))
+                        {
+                            YedDict[entry.NameHash] = fentry;
+                            YedDict[entry.ShortNameHash] = fentry;
                         }
                     }
                 }
@@ -1105,7 +1118,7 @@ namespace CodeWalker.GameFiles
                     {
                         try
                         {
-                            if ((entry.NameLower == "gtxd.ymt") || (entry.NameLower == "gtxd.meta"))
+                            if ((entry.NameLower == "gtxd.ymt") || (entry.NameLower == "gtxd.meta") || (entry.NameLower == "mph4_gtxd.ymt"))
                             {
                                 GtxdFile ymt = RpfMan.GetFile<GtxdFile>(entry);
                                 if (ymt.TxdRelationships != null)
@@ -2146,6 +2159,41 @@ namespace CodeWalker.GameFiles
                 return ycd;
             }
         }
+        public YedFile GetYed(uint hash)
+        {
+            if (!IsInited) return null;
+            lock (requestSyncRoot)
+            {
+                var key = new GameFileCacheKey(hash, GameFileType.Yed);
+                YedFile yed = mainCache.TryGet(key) as YedFile;
+                if (yed == null)
+                {
+                    var e = GetYedEntry(hash);
+                    if (e != null)
+                    {
+                        yed = new YedFile(e);
+                        if (mainCache.TryAdd(key, yed))
+                        {
+                            TryLoadEnqueue(yed);
+                        }
+                        else
+                        {
+                            yed.LoadQueued = false;
+                            //ErrorLog("Out of cache space - couldn't load yed: " + JenkIndex.GetString(hash)); //too spammy...
+                        }
+                    }
+                    else
+                    {
+                        //ErrorLog("Yed not found: " + JenkIndex.GetString(hash)); //too spammy...
+                    }
+                }
+                else if (!yed.Loaded)
+                {
+                    TryLoadEnqueue(yed);
+                }
+                return yed;
+            }
+        }
         public YnvFile GetYnv(uint hash)
         {
             if (!IsInited) return null;
@@ -2226,6 +2274,12 @@ namespace CodeWalker.GameFiles
         {
             RpfFileEntry entry;
             YcdDict.TryGetValue(hash, out entry);
+            return entry;
+        }
+        public RpfFileEntry GetYedEntry(uint hash)
+        {
+            RpfFileEntry entry;
+            YedDict.TryGetValue(hash, out entry);
             return entry;
         }
         public RpfFileEntry GetYnvEntry(uint hash)
@@ -2316,6 +2370,9 @@ namespace CodeWalker.GameFiles
                         break;
                     case GameFileType.Ycd:
                         req.Loaded = LoadFile(req as YcdFile);
+                        break;
+                    case GameFileType.Yed:
+                        req.Loaded = LoadFile(req as YedFile);
                         break;
                     case GameFileType.Ynv:
                         req.Loaded = LoadFile(req as YnvFile);
@@ -2832,6 +2889,35 @@ namespace CodeWalker.GameFiles
 
 
         }
+        public void TestAudioAwcs()
+        {
+
+            StringBuilder sb = new StringBuilder();
+
+            Dictionary<uint, int> allids = new Dictionary<uint, int>();
+
+            foreach (RpfFile file in AllRpfs)
+            {
+                foreach (RpfEntry entry in file.AllEntries)
+                {
+                    //try
+                    //{
+                        var n = entry.NameLower;
+                        if (n.EndsWith(".awc"))
+                        {
+                            UpdateStatus(string.Format(entry.Path));
+                            var awcfile = RpfMan.GetFile<AwcFile>(entry);
+                            if (awcfile != null)
+                            { }
+                        }
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    UpdateStatus("Error! " + ex.ToString());
+                    //}
+                }
+            }
+        }
         public void TestMetas()
         {
             //find all RSC meta files and generate the MetaTypes init code
@@ -3153,6 +3239,44 @@ namespace CodeWalker.GameFiles
 
                             YldFile yld = new YldFile(rfe);
                             RpfMan.LoadFile(yld, rfe);
+
+                        }
+                    }
+#if !DEBUG
+                    catch (Exception ex)
+                    {
+                        UpdateStatus("Error! " + ex.ToString());
+                        exceptions.Add(ex);
+                    }
+#endif
+                }
+            }
+
+            if (exceptions.Count > 0)
+            { }
+        }
+        public void TestYeds()
+        {
+
+            var exceptions = new List<Exception>();
+
+            foreach (RpfFile file in AllRpfs)
+            {
+                foreach (RpfEntry entry in file.AllEntries)
+                {
+#if !DEBUG
+                    try
+#endif
+                    {
+                        var rfe = entry as RpfFileEntry;
+                        if (rfe == null) continue;
+
+                        if (rfe.NameLower.EndsWith(".yed"))
+                        {
+                            UpdateStatus(string.Format(entry.Path));
+
+                            YedFile yed = new YedFile(rfe);
+                            RpfMan.LoadFile(yed, rfe);
 
                         }
                     }
@@ -3534,7 +3658,7 @@ namespace CodeWalker.GameFiles
         }
         public void TestYbns()
         {
-            bool xmltest = true;
+            bool xmltest = false;
             bool savetest = false;
             bool reloadtest = false;
             var errorfiles = new List<RpfEntry>();
@@ -3758,7 +3882,7 @@ namespace CodeWalker.GameFiles
                     //}
                 }
             }
-            if (errorfiles.Count > 0)
+            if (errorfiles.Count != 13)
             { }
         }
         public void TestYdds()
@@ -3805,6 +3929,16 @@ namespace CodeWalker.GameFiles
                                 { continue; }
 
                             }
+                            if (ydd?.DrawableDict?.Hashes != null)
+                            {
+                                uint h = 0;
+                                foreach (uint th in ydd.DrawableDict.Hashes)
+                                {
+                                    if (th <= h) 
+                                    { } //should never happen
+                                    h = th;
+                                }
+                            }
                         }
                     }
                     //catch (Exception ex)
@@ -3820,6 +3954,8 @@ namespace CodeWalker.GameFiles
         {
             bool savetest = false;
             var errorfiles = new List<RpfEntry>();
+            var sb = new StringBuilder();
+            var flagdict = new Dictionary<uint, int>();
             foreach (RpfFile file in AllRpfs)
             {
                 foreach (RpfEntry entry in file.AllEntries)
@@ -3860,6 +3996,24 @@ namespace CodeWalker.GameFiles
                                 { continue; }
 
                             }
+
+                            if (yft?.Fragment?.GlassWindows?.data_items != null)
+                            {
+                                var lastf = -1;
+                                for (int i = 0; i < yft.Fragment.GlassWindows.data_items.Length; i++)
+                                {
+                                    var w = yft.Fragment.GlassWindows.data_items[i];
+                                    if (w.Flags == lastf) continue;
+                                    lastf = w.Flags;
+                                    flagdict.TryGetValue(w.Flags, out int n);
+                                    if (n < 10)
+                                    {
+                                        flagdict[w.Flags] = n + 1;
+                                        sb.AppendLine(entry.Path + " Window " + i.ToString() + ": Flags " + w.Flags.ToString() + ", Low:" + w.FlagsLo.ToString() + ", High:" + w.FlagsHi.ToString());
+                                    }
+                                }
+                            }
+
                         }
                     }
                     //catch (Exception ex)
@@ -3868,6 +4022,8 @@ namespace CodeWalker.GameFiles
                     //}
                 }
             }
+            var teststr = sb.ToString();
+
             if (errorfiles.Count > 0)
             { }
         }
@@ -3912,6 +4068,80 @@ namespace CodeWalker.GameFiles
                                 if (ypt2.PtfxList == null)
                                 { continue; }
                                 if (ypt2.PtfxList.Name?.Value != ypt.PtfxList.Name?.Value)
+                                { continue; }
+
+                            }
+                        }
+                    }
+                    //catch (Exception ex)
+                    //{
+                    //    UpdateStatus("Error! " + ex.ToString());
+                    //}
+                }
+            }
+            if (errorfiles.Count > 0)
+            { }
+        }
+        public void TestYnvs()
+        {
+            bool xmltest = true;
+            var savetest = false;
+            var errorfiles = new List<RpfEntry>();
+            foreach (RpfFile file in AllRpfs)
+            {
+                foreach (RpfEntry entry in file.AllEntries)
+                {
+                    //try
+                    {
+                        if (entry.NameLower.EndsWith(".ynv"))
+                        {
+                            UpdateStatus(string.Format(entry.Path));
+                            YnvFile ynv = null;
+                            try
+                            {
+                                ynv = RpfMan.GetFile<YnvFile>(entry);
+                            }
+                            catch (Exception ex)
+                            {
+                                UpdateStatus("Error! " + ex.ToString());
+                                errorfiles.Add(entry);
+                            }
+                            if (xmltest && (ynv != null) && (ynv.Nav != null))
+                            {
+                                var xml = YnvXml.GetXml(ynv);
+                                if (xml != null)
+                                { }
+                                var ynv2 = XmlYnv.GetYnv(xml);
+                                if (ynv2 != null)
+                                { }
+                                var ynv2b = ynv2.Save();
+                                if (ynv2b != null)
+                                { }
+                                var ynv3 = new YnvFile();
+                                RpfFile.LoadResourceFile(ynv3, ynv2b, 2);
+                                var xml3 = YnvXml.GetXml(ynv3);
+                                if (xml.Length != xml3.Length)
+                                { }
+                                var xmllines = xml.Split('\n');
+                                var xml3lines = xml3.Split('\n');
+                                if (xmllines.Length != xml3lines.Length)
+                                { }
+                            }
+                            if (savetest && (ynv != null) && (ynv.Nav != null))
+                            {
+                                var fentry = entry as RpfFileEntry;
+                                if (fentry == null)
+                                { continue; } //shouldn't happen
+
+                                var bytes = ynv.Save();
+
+                                string origlen = TextUtil.GetBytesReadable(fentry.FileSize);
+                                string bytelen = TextUtil.GetBytesReadable(bytes.Length);
+
+                                var ynv2 = new YnvFile();
+                                RpfFile.LoadResourceFile(ynv2, bytes, 2);
+
+                                if (ynv2.Nav == null)
                                 { continue; }
 
                             }
@@ -4296,6 +4526,243 @@ namespace CodeWalker.GameFiles
             UpdateStatus((DateTime.Now - starttime).ToString() + " elapsed, " + drawablecount.ToString() + " drawables, " + errs.Count.ToString() + " errors.");
 
         }
+        public void TestHeightmaps()
+        {
+            var errorfiles = new List<RpfEntry>();
+            foreach (RpfFile file in AllRpfs)
+            {
+                foreach (RpfEntry entry in file.AllEntries)
+                {
+                    if (entry.NameLower.EndsWith(".dat") && entry.NameLower.StartsWith("heightmap"))
+                    {
+                        UpdateStatus(string.Format(entry.Path));
+                        HeightmapFile hmf = null;
+                        hmf = RpfMan.GetFile<HeightmapFile>(entry);
+                        var d1 = hmf.RawFileData;
+                        //var d2 = hmf.Save();
+                        var xml = HmapXml.GetXml(hmf);
+                        var hmf2 = XmlHmap.GetHeightmap(xml);
+                        var d2 = hmf2.Save();
+
+                        if (d1.Length == d2.Length)
+                        {
+                            for (int i = 0; i < d1.Length; i++)
+                            {
+                                if (d1[i] != d2[i])
+                                { }
+                            }
+                        }
+                        else
+                        { }
+
+                    }
+                }
+            }
+            if (errorfiles.Count > 0)
+            { }
+        }
+        public void TestWatermaps()
+        {
+            var errorfiles = new List<RpfEntry>();
+            foreach (RpfFile file in AllRpfs)
+            {
+                foreach (RpfEntry entry in file.AllEntries)
+                {
+                    if (entry.NameLower.EndsWith(".dat") && entry.NameLower.StartsWith("waterheight"))
+                    {
+                        UpdateStatus(string.Format(entry.Path));
+                        WatermapFile wmf = null;
+                        wmf = RpfMan.GetFile<WatermapFile>(entry);
+                        //var d1 = wmf.RawFileData;
+                        //var d2 = wmf.Save();
+                        //var xml = WatermapXml.GetXml(wmf);
+                        //var wmf2 = XmlWatermap.GetWatermap(xml);
+                        //var d2 = wmf2.Save();
+
+                        //if (d1.Length == d2.Length)
+                        //{
+                        //    for (int i = 0; i < d1.Length; i++)
+                        //    {
+                        //        if (d1[i] != d2[i])
+                        //        { }
+                        //    }
+                        //}
+                        //else
+                        //{ }
+
+                    }
+                }
+            }
+            if (errorfiles.Count > 0)
+            { }
+        }
+        public void GetShadersXml()
+        {
+            bool doydr = true;
+            bool doydd = true;
+            bool doyft = true;
+            bool doypt = true;
+
+            var data = new Dictionary<MetaHash, ShaderXmlDataCollection>();
+
+            void collectDrawable(DrawableBase d)
+            {
+                if (d?.AllModels == null) return;
+                foreach (var model in d.AllModels)
+                {
+                    if (model?.Geometries == null) continue;
+                    foreach (var geom in model.Geometries)
+                    {
+                        var s = geom?.Shader;
+                        if (s == null) continue;
+                        ShaderXmlDataCollection dc = null;
+                        if (!data.TryGetValue(s.Name, out dc))
+                        {
+                            dc = new ShaderXmlDataCollection();
+                            dc.Name = s.Name;
+                            data.Add(s.Name, dc);
+                        }
+                        dc.AddShaderUse(s, geom);
+                    }
+                }
+            }
+
+
+
+            foreach (RpfFile file in AllRpfs)
+            {
+                foreach (RpfEntry entry in file.AllEntries)
+                {
+                    try
+                    {
+                        if (doydr && entry.NameLower.EndsWith(".ydr"))
+                        {
+                            UpdateStatus(entry.Path);
+                            YdrFile ydr = RpfMan.GetFile<YdrFile>(entry);
+
+                            if (ydr == null) { continue; }
+                            if (ydr.Drawable == null) { continue; }
+                            collectDrawable(ydr.Drawable);
+                        }
+                        else if (doydd & entry.NameLower.EndsWith(".ydd"))
+                        {
+                            UpdateStatus(entry.Path);
+                            YddFile ydd = RpfMan.GetFile<YddFile>(entry);
+
+                            if (ydd == null) { continue; }
+                            if (ydd.Dict == null) { continue; }
+                            foreach (var drawable in ydd.Dict.Values)
+                            {
+                                collectDrawable(drawable);
+                            }
+                        }
+                        else if (doyft && entry.NameLower.EndsWith(".yft"))
+                        {
+                            UpdateStatus(entry.Path);
+                            YftFile yft = RpfMan.GetFile<YftFile>(entry);
+
+                            if (yft == null) { continue; }
+                            if (yft.Fragment == null) { continue; }
+                            if (yft.Fragment.Drawable != null)
+                            {
+                                collectDrawable(yft.Fragment.Drawable);
+                            }
+                            if ((yft.Fragment.Cloths != null) && (yft.Fragment.Cloths.data_items != null))
+                            {
+                                foreach (var cloth in yft.Fragment.Cloths.data_items)
+                                {
+                                    collectDrawable(cloth.Drawable);
+                                }
+                            }
+                            if ((yft.Fragment.DrawableArray != null) && (yft.Fragment.DrawableArray.data_items != null))
+                            {
+                                foreach (var drawable in yft.Fragment.DrawableArray.data_items)
+                                {
+                                    collectDrawable(drawable);
+                                }
+                            }
+                        }
+                        else if (doypt && entry.NameLower.EndsWith(".ypt"))
+                        {
+                            UpdateStatus(entry.Path);
+                            YptFile ypt = RpfMan.GetFile<YptFile>(entry);
+
+                            if (ypt == null) { continue; }
+                            if (ypt.DrawableDict == null) { continue; }
+                            foreach (var drawable in ypt.DrawableDict.Values)
+                            {
+                                collectDrawable(drawable);
+                            }
+                        }
+                    }
+                    catch //(Exception ex)
+                    { }
+                }
+            }
+
+
+
+
+            var shaders = data.Values.ToList();
+            shaders.Sort((a, b) => { return b.GeomCount.CompareTo(a.GeomCount); });
+
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine(MetaXml.XmlHeader);
+            MetaXml.OpenTag(sb, 0, "Shaders");
+            foreach (var s in shaders)
+            {
+                MetaXml.OpenTag(sb, 1, "Item");
+                MetaXml.StringTag(sb, 2, "Name", MetaXml.HashString(s.Name));
+                MetaXml.WriteHashItemArray(sb, s.GetSortedList(s.FileNames).ToArray(), 2, "FileName");
+                MetaXml.WriteRawArray(sb, s.GetSortedList(s.RenderBuckets).ToArray(), 2, "RenderBucket", "");
+                MetaXml.OpenTag(sb, 2, "Layout");
+                var layouts = s.GetSortedList(s.VertexLayouts);
+                foreach (var l in layouts)
+                {
+                    var vd = new VertexDeclaration();
+                    vd.Types = l.Types;
+                    vd.Flags = l.Flags;
+                    vd.WriteXml(sb, 3, "Item");
+                }
+                MetaXml.CloseTag(sb, 2, "Layout");
+                MetaXml.OpenTag(sb, 2, "Parameters");
+                var otstr = "Item name=\"{0}\" type=\"{1}\"";
+                var texparams = s.GetSortedList(s.TexParams);
+                var valparams = s.ValParams;
+                var arrparams = s.ArrParams;
+                foreach (var tp in texparams)
+                {
+                    MetaXml.SelfClosingTag(sb, 3, string.Format(otstr, ((ShaderParamNames)tp).ToString(), "Texture"));
+                }
+                foreach (var vp in valparams)
+                {
+                    var svp = s.GetSortedList(vp.Value);
+                    var defval = svp.FirstOrDefault();
+                    MetaXml.SelfClosingTag(sb, 3, string.Format(otstr, ((ShaderParamNames)vp.Key).ToString(), "Vector") + " " + FloatUtil.GetVector4XmlString(defval));
+                }
+                foreach (var ap in arrparams)
+                {
+                    var defval = ap.Value.FirstOrDefault();
+                    MetaXml.OpenTag(sb, 3, string.Format(otstr, ((ShaderParamNames)ap.Key).ToString(), "Array"));
+                    foreach (var vec in defval)
+                    {
+                        MetaXml.SelfClosingTag(sb, 4, "Value " + FloatUtil.GetVector4XmlString(vec));
+                    }
+                    MetaXml.CloseTag(sb, 3, "Item");
+                }
+                MetaXml.CloseTag(sb, 2, "Parameters");
+                MetaXml.CloseTag(sb, 1, "Item");
+            }
+            MetaXml.CloseTag(sb, 0, "Shaders");
+
+            var xml = sb.ToString();
+
+            File.WriteAllText("C:\\Shaders.xml", xml);
+
+
+        }
         public void GetArchetypeTimesList()
         {
 
@@ -4330,6 +4797,123 @@ namespace CodeWalker.GameFiles
 
         }
 
+
+        private class ShaderXmlDataCollection
+        {
+            public MetaHash Name { get; set; }
+            public Dictionary<MetaHash, int> FileNames { get; set; } = new Dictionary<MetaHash, int>();
+            public Dictionary<byte, int> RenderBuckets { get; set; } = new Dictionary<byte, int>();
+            public Dictionary<ShaderXmlVertexLayout, int> VertexLayouts { get; set; } = new Dictionary<ShaderXmlVertexLayout, int>();
+            public Dictionary<MetaName, int> TexParams { get; set; } = new Dictionary<MetaName, int>();
+            public Dictionary<MetaName, Dictionary<Vector4, int>> ValParams { get; set; } = new Dictionary<MetaName, Dictionary<Vector4, int>>();
+            public Dictionary<MetaName, List<Vector4[]>> ArrParams { get; set; } = new Dictionary<MetaName, List<Vector4[]>>();
+            public int GeomCount { get; set; } = 0;
+
+
+            public void AddShaderUse(ShaderFX s, DrawableGeometry g)
+            {
+                GeomCount++;
+
+                AddItem(s.FileName, FileNames);
+                AddItem(s.RenderBucket, RenderBuckets);
+
+                var info = g.VertexBuffer?.Info;
+                if (info != null)
+                {
+                    AddItem(new ShaderXmlVertexLayout() { Flags = info.Flags, Types = info.Types }, VertexLayouts);
+                }
+
+                if (s.ParametersList?.Parameters == null) return;
+                if (s.ParametersList?.Hashes == null) return;
+
+                for (int i = 0; i < s.ParametersList.Count; i++)
+                {
+                    var h = s.ParametersList.Hashes[i];
+                    var p = s.ParametersList.Parameters[i];
+
+                    if (p.DataType == 0)//texture
+                    {
+                        AddItem(h, TexParams);
+                    }
+                    else if (p.DataType == 1)//vector
+                    {
+                        var vp = GetItem(h, ValParams);
+                        if (p.Data is Vector4 vec)
+                        {
+                            AddItem(vec, vp);
+                        }
+                    }
+                    else if (p.DataType > 1)//array
+                    {
+                        var ap = GetItem(h, ArrParams);
+                        if (p.Data is Vector4[] arr)
+                        {
+                            bool found = false;
+                            foreach (var exarr in ap)
+                            {
+                                if (exarr.Length != arr.Length) continue;
+                                bool match = true;
+                                for (int j = 0; j < exarr.Length; j++)
+                                {
+                                    if (exarr[j] != arr[j])
+                                    {
+                                        match = false;
+                                        break;
+                                    }
+                                }
+                                if (match)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found)
+                            {
+                                ap.Add(arr);
+                            }
+                        }
+                    }
+                }
+
+            }
+            public void AddItem<T>(T t, Dictionary<T, int> d)
+            {
+                if (d.ContainsKey(t))
+                {
+                    d[t]++;
+                }
+                else
+                {
+                    d[t] = 1;
+                }
+            }
+            public U GetItem<T, U>(T t, Dictionary<T, U> d) where U:new()
+            {
+                U r = default(U);
+                if (!d.TryGetValue(t, out r))
+                {
+                    r = new U();
+                    d[t] = r;
+                }
+                return r;
+            }
+            public List<T> GetSortedList<T>(Dictionary<T, int> d)
+            {
+                var kvps = d.ToList();
+                kvps.Sort((a, b) => { return b.Value.CompareTo(a.Value); });
+                return kvps.Select((a) => { return a.Key; }).ToList();
+            }
+        }
+        private struct ShaderXmlVertexLayout
+        {
+            public VertexDeclarationTypes Types { get; set; }
+            public uint Flags { get; set; }
+            public VertexType VertexType { get { return (VertexType)Flags; } }
+            public override string ToString()
+            {
+                return Types.ToString() + ", " + VertexType.ToString();
+            }
+        }
     }
 
 

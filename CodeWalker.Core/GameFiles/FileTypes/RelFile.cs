@@ -701,7 +701,7 @@ namespace CodeWalker.GameFiles
                 case Dat151RelType.Unk23: return new Dat151Unk23(d, br);
                 case Dat151RelType.Unk27: return new Dat151Unk27(d, br);
                 case Dat151RelType.Unk28: return new Dat151Unk28(d, br);
-                case Dat151RelType.Unk29: return new Dat151Unk29(d, br);
+                case Dat151RelType.PedR2PVG: return new Dat151PedR2PVG(d, br);
                 case Dat151RelType.Unk31: return new Dat151Unk31(d, br);
                 case Dat151RelType.Unk33: return new Dat151Unk33(d, br);
                 case Dat151RelType.PoliceScannerLocation: return new Dat151PoliceScannerLocation(d, br);
@@ -868,7 +868,7 @@ namespace CodeWalker.GameFiles
                         case Dat151RelType.Unk23: return new Dat151Unk23(this);
                         case Dat151RelType.Unk27: return new Dat151Unk27(this);
                         case Dat151RelType.Unk28: return new Dat151Unk28(this);
-                        case Dat151RelType.Unk29: return new Dat151Unk29(this);
+                        case Dat151RelType.PedR2PVG: return new Dat151PedR2PVG(this);
                         case Dat151RelType.Unk31: return new Dat151Unk31(this);
                         case Dat151RelType.Unk33: return new Dat151Unk33(this);
                         case Dat151RelType.PoliceScannerLocation: return new Dat151PoliceScannerLocation(this);
@@ -1084,7 +1084,7 @@ namespace CodeWalker.GameFiles
                                 break;
                             case Dat151RelType.Mood:
                             case Dat151RelType.Unk70:
-                            case Dat151RelType.Unk29:
+                            case Dat151RelType.PedR2PVG:
                             case Dat151RelType.SpeechParams:
                             case Dat151RelType.Unk11:
                             case Dat151RelType.AmbienceBankMap:
@@ -1756,24 +1756,24 @@ namespace CodeWalker.GameFiles
 
         public FlagsUint Flags2 { get; set; }
         public ushort Unk01 { get; set; }
-        public ushort Unk02 { get; set; }
-        public ushort Unk03 { get; set; } //0xD-0xF
-        public ushort Unk04 { get; set; } //0xF-0x11
-        public ushort Unk05 { get; set; } //0x11-0x13
-        public ushort Unk06 { get; set; } //0x13-0x15
-        public ushort Unk07 { get; set; } //0x15-0x17
-        public ushort Unk08 { get; set; } //0x17-0x19
-        public ushort Unk09 { get; set; } //0x19-0x1B
-        public int UnkInt1 { get; set; } //0x1B-0x1F
-        public int UnkInt2 { get; set; } //0x1F-0x23
-        public ushort Unk10 { get; set; } //0x23-0x25
-        public ushort Unk11 { get; set; } //0x25-0x27
-        public ushort Unk12 { get; set; } //0x27-0x29
+        public ushort Volume { get; set; }
+        public ushort VolumeVariance { get; set; } //0xD-0xF
+        public ushort Pitch { get; set; } //0xF-0x11
+        public ushort PitchVariance { get; set; } //0x11-0x13
+        public ushort Pan { get; set; } //0x13-0x15
+        public ushort PanVariance { get; set; } //0x15-0x17
+        public ushort PreDelay { get; set; } //0x17-0x19
+        public ushort PreDelayVariance { get; set; } //0x19-0x1B
+        public int StartOffset { get; set; } //0x1B-0x1F
+        public int StartOffsetVariance { get; set; } //0x1F-0x23
+        public ushort AttackTime { get; set; } //0x23-0x25
+        public ushort ReleaseTime { get; set; } //0x25-0x27
+        public ushort DopplerFactor { get; set; } //0x27-0x29
         public MetaHash CategoryHash { get; set; } //0x29-0x2D
-        public ushort Unk14 { get; set; } //0x2D-0x2F
-        public ushort Unk15 { get; set; } //0x2F-0x31
-        public ushort Unk16 { get; set; } //0x31-0x33
-        public ushort Unk17 { get; set; } //0x33-0x35
+        public ushort LPFCutoff { get; set; } //0x2D-0x2F
+        public ushort LPFCutoffVariance { get; set; } //0x2F-0x31
+        public ushort HPFCutoff { get; set; } //0x31-0x33
+        public ushort HPFCutoffVariance { get; set; } //0x33-0x35
         public MetaHash UnkHash3 { get; set; } //0x35-0x39
         public ushort Unk18 { get; set; } //0x39-0x3B
         public byte Unk19 { get; set; } //0x3B-0x3C
@@ -1806,30 +1806,30 @@ namespace CodeWalker.GameFiles
             {
                 if (Bit(0)) Flags2 = br.ReadUInt32();
                 if (Bit(1)) Unk01 = br.ReadUInt16();
-                if (Bit(2)) Unk02 = br.ReadUInt16();
-                if (Bit(3)) Unk03 = br.ReadUInt16();
-                if (Bit(4)) Unk04 = br.ReadUInt16();
-                if (Bit(5)) Unk05 = br.ReadUInt16();
-                if (Bit(6)) Unk06 = br.ReadUInt16();
-                if (Bit(7)) Unk07 = br.ReadUInt16();
+                if (Bit(2)) Volume = br.ReadUInt16();
+                if (Bit(3)) VolumeVariance = br.ReadUInt16();
+                if (Bit(4)) Pitch = br.ReadUInt16();
+                if (Bit(5)) PitchVariance = br.ReadUInt16();
+                if (Bit(6)) Pan = br.ReadUInt16();
+                if (Bit(7)) PanVariance = br.ReadUInt16();
             }
             if ((Flags & 0xFF00) != 0xAA00)
             {
-                if (Bit(8)) Unk08 = br.ReadUInt16();
-                if (Bit(9)) Unk09 = br.ReadUInt16();
-                if (Bit(10)) UnkInt1 = br.ReadInt32();
-                if (Bit(11)) UnkInt2 = br.ReadInt32();
-                if (Bit(12)) Unk10 = br.ReadUInt16();
-                if (Bit(13)) Unk11 = br.ReadUInt16();
-                if (Bit(14)) Unk12 = br.ReadUInt16();
+                if (Bit(8)) PreDelay = br.ReadUInt16();
+                if (Bit(9)) PreDelayVariance = br.ReadUInt16();
+                if (Bit(10)) StartOffset = br.ReadInt32();
+                if (Bit(11)) StartOffsetVariance = br.ReadInt32();
+                if (Bit(12)) AttackTime = br.ReadUInt16();
+                if (Bit(13)) ReleaseTime = br.ReadUInt16();
+                if (Bit(14)) DopplerFactor = br.ReadUInt16();
                 if (Bit(15)) CategoryHash = br.ReadUInt32();
             }
             if ((Flags & 0xFF0000) != 0xAA0000)
             {
-                if (Bit(16)) Unk14 = br.ReadUInt16();
-                if (Bit(17)) Unk15 = br.ReadUInt16();
-                if (Bit(18)) Unk16 = br.ReadUInt16();
-                if (Bit(19)) Unk17 = br.ReadUInt16();
+                if (Bit(16)) LPFCutoff = br.ReadUInt16();
+                if (Bit(17)) LPFCutoffVariance = br.ReadUInt16();
+                if (Bit(18)) HPFCutoff = br.ReadUInt16();
+                if (Bit(19)) HPFCutoffVariance = br.ReadUInt16();
                 if (Bit(20)) UnkHash3 = br.ReadUInt32();
                 if (Bit(21)) Unk18 = br.ReadUInt16();
                 if (Bit(22)) Unk19 = br.ReadByte();
@@ -1860,30 +1860,30 @@ namespace CodeWalker.GameFiles
             {
                 if (Bit(0)) bw.Write(Flags2);
                 if (Bit(1)) bw.Write(Unk01);
-                if (Bit(2)) bw.Write(Unk02);
-                if (Bit(3)) bw.Write(Unk03);
-                if (Bit(4)) bw.Write(Unk04);
-                if (Bit(5)) bw.Write(Unk05);
-                if (Bit(6)) bw.Write(Unk06);
-                if (Bit(7)) bw.Write(Unk07);
+                if (Bit(2)) bw.Write(Volume);
+                if (Bit(3)) bw.Write(VolumeVariance);
+                if (Bit(4)) bw.Write(Pitch);
+                if (Bit(5)) bw.Write(PitchVariance);
+                if (Bit(6)) bw.Write(Pan);
+                if (Bit(7)) bw.Write(PanVariance);
             }
             if ((Flags & 0xFF00) != 0xAA00)
             {
-                if (Bit(8)) bw.Write(Unk08);
-                if (Bit(9)) bw.Write(Unk09);
-                if (Bit(10)) bw.Write(UnkInt1);
-                if (Bit(11)) bw.Write(UnkInt2);
-                if (Bit(12)) bw.Write(Unk10);
-                if (Bit(13)) bw.Write(Unk11);
-                if (Bit(14)) bw.Write(Unk12);
+                if (Bit(8)) bw.Write(PreDelay);
+                if (Bit(9)) bw.Write(PreDelayVariance);
+                if (Bit(10)) bw.Write(StartOffset);
+                if (Bit(11)) bw.Write(StartOffsetVariance);
+                if (Bit(12)) bw.Write(AttackTime);
+                if (Bit(13)) bw.Write(ReleaseTime);
+                if (Bit(14)) bw.Write(DopplerFactor);
                 if (Bit(15)) bw.Write(CategoryHash);
             }
             if ((Flags & 0xFF0000) != 0xAA0000)
             {
-                if (Bit(16)) bw.Write(Unk14);
-                if (Bit(17)) bw.Write(Unk15);
-                if (Bit(18)) bw.Write(Unk16);
-                if (Bit(19)) bw.Write(Unk17);
+                if (Bit(16)) bw.Write(LPFCutoff);
+                if (Bit(17)) bw.Write(LPFCutoffVariance);
+                if (Bit(18)) bw.Write(HPFCutoff);
+                if (Bit(19)) bw.Write(HPFCutoffVariance);
                 if (Bit(20)) bw.Write(UnkHash3);
                 if (Bit(21)) bw.Write(Unk18);
                 if (Bit(22)) bw.Write(Unk19);
@@ -1911,30 +1911,30 @@ namespace CodeWalker.GameFiles
             {
                 if (Bit(0)) RelXml.ValueTag(sb, indent, "Flags2", "0x" + Flags2.Hex);
                 if (Bit(1)) RelXml.ValueTag(sb, indent, "Unk01", Unk01.ToString());
-                if (Bit(2)) RelXml.ValueTag(sb, indent, "Unk02", Unk02.ToString());
-                if (Bit(3)) RelXml.ValueTag(sb, indent, "Unk03", Unk03.ToString());
-                if (Bit(4)) RelXml.ValueTag(sb, indent, "Unk04", Unk04.ToString());
-                if (Bit(5)) RelXml.ValueTag(sb, indent, "Unk05", Unk05.ToString());
-                if (Bit(6)) RelXml.ValueTag(sb, indent, "Unk06", Unk06.ToString());
-                if (Bit(7)) RelXml.ValueTag(sb, indent, "Unk07", Unk07.ToString());
+                if (Bit(2)) RelXml.ValueTag(sb, indent, "Volume", Volume.ToString());
+                if (Bit(3)) RelXml.ValueTag(sb, indent, "VolumeVariance", VolumeVariance.ToString());
+                if (Bit(4)) RelXml.ValueTag(sb, indent, "Pitch", Pitch.ToString());
+                if (Bit(5)) RelXml.ValueTag(sb, indent, "PitchVariance", PitchVariance.ToString());
+                if (Bit(6)) RelXml.ValueTag(sb, indent, "Pan", Pan.ToString());
+                if (Bit(7)) RelXml.ValueTag(sb, indent, "PanVariance", PanVariance.ToString());
             }
             if ((Flags & 0xFF00) != 0xAA00)
             {
-                if (Bit(8)) RelXml.ValueTag(sb, indent, "Unk08", Unk08.ToString());
-                if (Bit(9)) RelXml.ValueTag(sb, indent, "Unk09", Unk09.ToString());
-                if (Bit(10)) RelXml.ValueTag(sb, indent, "UnkInt1", UnkInt1.ToString());
-                if (Bit(11)) RelXml.ValueTag(sb, indent, "UnkInt2", UnkInt2.ToString());
-                if (Bit(12)) RelXml.ValueTag(sb, indent, "Unk10", Unk10.ToString());
-                if (Bit(13)) RelXml.ValueTag(sb, indent, "Unk11", Unk11.ToString());
-                if (Bit(14)) RelXml.ValueTag(sb, indent, "Unk12", Unk12.ToString());
+                if (Bit(8)) RelXml.ValueTag(sb, indent, "PreDelay", PreDelay.ToString());
+                if (Bit(9)) RelXml.ValueTag(sb, indent, "PreDelayVariance", PreDelayVariance.ToString());
+                if (Bit(10)) RelXml.ValueTag(sb, indent, "StartOffset", StartOffset.ToString());
+                if (Bit(11)) RelXml.ValueTag(sb, indent, "StartOffsetVariance", StartOffsetVariance.ToString());
+                if (Bit(12)) RelXml.ValueTag(sb, indent, "AttackTime", AttackTime.ToString());
+                if (Bit(13)) RelXml.ValueTag(sb, indent, "ReleaseTime", ReleaseTime.ToString());
+                if (Bit(14)) RelXml.ValueTag(sb, indent, "DopplerFactor", DopplerFactor.ToString());
                 if (Bit(15)) RelXml.StringTag(sb, indent, "Category", RelXml.HashString(CategoryHash));
             }
             if ((Flags & 0xFF0000) != 0xAA0000)
             {
-                if (Bit(16)) RelXml.ValueTag(sb, indent, "Unk14", Unk14.ToString());
-                if (Bit(17)) RelXml.ValueTag(sb, indent, "Unk15", Unk15.ToString());
-                if (Bit(18)) RelXml.ValueTag(sb, indent, "Unk16", Unk16.ToString());
-                if (Bit(19)) RelXml.ValueTag(sb, indent, "Unk17", Unk17.ToString());
+                if (Bit(16)) RelXml.ValueTag(sb, indent, "LPFCutoff", LPFCutoff.ToString());
+                if (Bit(17)) RelXml.ValueTag(sb, indent, "LPFCutoffVariance", LPFCutoffVariance.ToString());
+                if (Bit(18)) RelXml.ValueTag(sb, indent, "HPFCutoff", HPFCutoff.ToString());
+                if (Bit(19)) RelXml.ValueTag(sb, indent, "HPFCutoffVariance", HPFCutoffVariance.ToString());
                 if (Bit(20)) RelXml.StringTag(sb, indent, "UnkHash3", RelXml.HashString(UnkHash3));
                 if (Bit(21)) RelXml.ValueTag(sb, indent, "Unk18", Unk18.ToString());
                 if (Bit(22)) RelXml.ValueTag(sb, indent, "Unk19", Unk19.ToString());
@@ -1961,30 +1961,30 @@ namespace CodeWalker.GameFiles
             {
                 if (Bit(0)) Flags2 = Xml.GetChildUIntAttribute(node, "Flags2", "value");
                 if (Bit(1)) Unk01 = (ushort)Xml.GetChildUIntAttribute(node, "Unk01", "value");
-                if (Bit(2)) Unk02 = (ushort)Xml.GetChildUIntAttribute(node, "Unk02", "value");
-                if (Bit(3)) Unk03 = (ushort)Xml.GetChildUIntAttribute(node, "Unk03", "value");
-                if (Bit(4)) Unk04 = (ushort)Xml.GetChildUIntAttribute(node, "Unk04", "value");
-                if (Bit(5)) Unk05 = (ushort)Xml.GetChildUIntAttribute(node, "Unk05", "value");
-                if (Bit(6)) Unk06 = (ushort)Xml.GetChildUIntAttribute(node, "Unk06", "value");
-                if (Bit(7)) Unk07 = (ushort)Xml.GetChildUIntAttribute(node, "Unk07", "value");
+                if (Bit(2)) Volume = (ushort)Xml.GetChildUIntAttribute(node, "Volume", "value");
+                if (Bit(3)) VolumeVariance = (ushort)Xml.GetChildUIntAttribute(node, "VolumeVariance", "value");
+                if (Bit(4)) Pitch = (ushort)Xml.GetChildUIntAttribute(node, "Pitch", "value");
+                if (Bit(5)) PitchVariance = (ushort)Xml.GetChildUIntAttribute(node, "PitchVariance", "value");
+                if (Bit(6)) Pan = (ushort)Xml.GetChildUIntAttribute(node, "Pan", "value");
+                if (Bit(7)) PanVariance = (ushort)Xml.GetChildUIntAttribute(node, "PanVariance", "value");
             }
             if ((Flags & 0xFF00) != 0xAA00)
             {
-                if (Bit(8)) Unk08 = (ushort)Xml.GetChildUIntAttribute(node, "Unk08", "value");
-                if (Bit(9)) Unk09 = (ushort)Xml.GetChildUIntAttribute(node, "Unk09", "value");
-                if (Bit(10)) UnkInt1 = Xml.GetChildIntAttribute(node, "UnkInt1", "value");
-                if (Bit(11)) UnkInt2 = Xml.GetChildIntAttribute(node, "UnkInt2", "value");
-                if (Bit(12)) Unk10 = (ushort)Xml.GetChildUIntAttribute(node, "Unk10", "value");
-                if (Bit(13)) Unk11 = (ushort)Xml.GetChildUIntAttribute(node, "Unk11", "value");
-                if (Bit(14)) Unk12 = (ushort)Xml.GetChildUIntAttribute(node, "Unk12", "value");
+                if (Bit(8)) PreDelay = (ushort)Xml.GetChildUIntAttribute(node, "PreDelay", "value");
+                if (Bit(9)) PreDelayVariance = (ushort)Xml.GetChildUIntAttribute(node, "PreDelayVariance", "value");
+                if (Bit(10)) StartOffset = Xml.GetChildIntAttribute(node, "StartOffset", "value");
+                if (Bit(11)) StartOffsetVariance = Xml.GetChildIntAttribute(node, "StartOffsetVariance", "value");
+                if (Bit(12)) AttackTime = (ushort)Xml.GetChildUIntAttribute(node, "AttackTime", "value");
+                if (Bit(13)) ReleaseTime = (ushort)Xml.GetChildUIntAttribute(node, "ReleaseTime", "value");
+                if (Bit(14)) DopplerFactor = (ushort)Xml.GetChildUIntAttribute(node, "DopplerFactor", "value");
                 if (Bit(15)) CategoryHash = XmlRel.GetHash(Xml.GetChildInnerText(node, "Category"));
             }
             if ((Flags & 0xFF0000) != 0xAA0000)
             {
-                if (Bit(16)) Unk14 = (ushort)Xml.GetChildUIntAttribute(node, "Unk14", "value");
-                if (Bit(17)) Unk15 = (ushort)Xml.GetChildUIntAttribute(node, "Unk15", "value");
-                if (Bit(18)) Unk16 = (ushort)Xml.GetChildUIntAttribute(node, "Unk16", "value");
-                if (Bit(19)) Unk17 = (ushort)Xml.GetChildUIntAttribute(node, "Unk17", "value");
+                if (Bit(16)) LPFCutoff = (ushort)Xml.GetChildUIntAttribute(node, "LPFCutoff", "value");
+                if (Bit(17)) LPFCutoffVariance = (ushort)Xml.GetChildUIntAttribute(node, "LPFCutoffVariance", "value");
+                if (Bit(18)) HPFCutoff = (ushort)Xml.GetChildUIntAttribute(node, "HPFCutoff", "value");
+                if (Bit(19)) HPFCutoffVariance = (ushort)Xml.GetChildUIntAttribute(node, "HPFCutoffVariance", "value");
                 if (Bit(20)) UnkHash3 = XmlRel.GetHash(Xml.GetChildInnerText(node, "UnkHash3"));
                 if (Bit(21)) Unk18 = (ushort)Xml.GetChildUIntAttribute(node, "Unk18", "value");
                 if (Bit(22)) Unk19 = (byte)Xml.GetChildUIntAttribute(node, "Unk19", "value");
@@ -2012,30 +2012,30 @@ namespace CodeWalker.GameFiles
             {
                 if (Bit(0)) length += 4;// Flags2 = br.ReadUInt32();
                 if (Bit(1)) length += 2;// Unk01 = br.ReadUInt16();
-                if (Bit(2)) length += 2;// Unk02 = br.ReadUInt16();
-                if (Bit(3)) length += 2;// Unk03 = br.ReadUInt16();
-                if (Bit(4)) length += 2;// Unk04 = br.ReadUInt16();
-                if (Bit(5)) length += 2;// Unk05 = br.ReadUInt16();
-                if (Bit(6)) length += 2;// Unk06 = br.ReadUInt16();
-                if (Bit(7)) length += 2;// Unk07 = br.ReadUInt16();
+                if (Bit(2)) length += 2;// Volume = br.ReadUInt16();
+                if (Bit(3)) length += 2;// VolumeVariance = br.ReadUInt16();
+                if (Bit(4)) length += 2;// Pitch = br.ReadUInt16();
+                if (Bit(5)) length += 2;// PitchVariance = br.ReadUInt16();
+                if (Bit(6)) length += 2;// Pan = br.ReadUInt16();
+                if (Bit(7)) length += 2;// PanVariance = br.ReadUInt16();
             }
             if ((Flags & 0xFF00) != 0xAA00)
             {
-                if (Bit(8)) length += 2;// Unk08 = br.ReadUInt16();
-                if (Bit(9)) length += 2;// Unk09 = br.ReadUInt16();
-                if (Bit(10)) length += 4;// UnkHash1 = br.ReadUInt32();
-                if (Bit(11)) length += 4;// UnkHash2 = br.ReadUInt32();
-                if (Bit(12)) length += 2;// Unk10 = br.ReadUInt16();
-                if (Bit(13)) length += 2;// Unk11 = br.ReadUInt16();
-                if (Bit(14)) length += 2;// Unk12 = br.ReadUInt16();
+                if (Bit(8)) length += 2;// PreDelay = br.ReadUInt16();
+                if (Bit(9)) length += 2;// PreDelayVariance = br.ReadUInt16();
+                if (Bit(10)) length += 4;// StartOffset = br.ReadUInt32();
+                if (Bit(11)) length += 4;// StartOffsetVariance = br.ReadUInt32();
+                if (Bit(12)) length += 2;// AttackTime = br.ReadUInt16();
+                if (Bit(13)) length += 2;// ReleaseTime = br.ReadUInt16();
+                if (Bit(14)) length += 2;// DopplerFactor = br.ReadUInt16();
                 if (Bit(15)) length += 4;// CategoryHash = br.ReadUInt32();
             }
             if ((Flags & 0xFF0000) != 0xAA0000)
             {
-                if (Bit(16)) length += 2;// Unk14 = br.ReadUInt16();
-                if (Bit(17)) length += 2;// Unk15 = br.ReadUInt16();
-                if (Bit(18)) length += 2;// Unk16 = br.ReadUInt16();
-                if (Bit(19)) length += 2;// Unk17 = br.ReadUInt16();
+                if (Bit(16)) length += 2;// LPFCutoff = br.ReadUInt16();
+                if (Bit(17)) length += 2;// LPFCutoffVariance = br.ReadUInt16();
+                if (Bit(18)) length += 2;// HPFCutoff = br.ReadUInt16();
+                if (Bit(19)) length += 2;// HPFCutoffVariance = br.ReadUInt16();
                 if (Bit(20)) length += 4;// UnkHash3 = br.ReadUInt32();
                 if (Bit(21)) length += 2;// Unk18 = br.ReadUInt16();
                 if (Bit(22)) length += 1;// Unk19 = br.ReadByte();
@@ -2063,7 +2063,7 @@ namespace CodeWalker.GameFiles
 
         public override string ToString()
         {
-            return string.Format("{0}: {1}, {2}, {3}, {4}, {5}, {6}, {7}", Flags.Hex, Flags2.Hex, CategoryHash, UnkInt1, UnkInt2, UnkHash3, UnkHash4, UnkHash5);
+            return string.Format("{0}: {1}, {2}, {3}, {4}, {5}, {6}, {7}", Flags.Hex, Flags2.Hex, CategoryHash, StartOffset, StartOffsetVariance, UnkHash3, UnkHash4, UnkHash5);
         }
     }
 
@@ -2733,7 +2733,7 @@ namespace CodeWalker.GameFiles
     }
     [TC(typeof(EXP))] public class Dat54StreamingSound : Dat54Sound
     {
-        int Duration { get; set; } //0x0-0x4
+        public int Duration { get; set; } //0x0-0x4
 
         public Dat54StreamingSound(RelFile rel) : base(rel, Dat54SoundType.StreamingSound)
         { }
@@ -4950,7 +4950,7 @@ namespace CodeWalker.GameFiles
         RadioMusic = 26,
         Unk27 = 27,
         Unk28 = 28,
-        Unk29 = 29,
+        PedR2PVG = 29,
         PedPVG = 30, //maybe Ped Voice Group?
         Unk31 = 31,
         AmbientEmitterList = 32,
@@ -6216,8 +6216,8 @@ namespace CodeWalker.GameFiles
         public MetaHash Hash1 { get; set; }
         public uint Unk02 { get; set; }
         public float Unk03 { get; set; }
-        public float Unk04 { get; set; }
-        public float Unk05 { get; set; }
+        public float Reverb { get; set; }
+        public float Echo { get; set; }
         public MetaHash Unk06 { get; set; }
         public float Unk07 { get; set; }
         public float Unk08 { get; set; }
@@ -6240,8 +6240,8 @@ namespace CodeWalker.GameFiles
             Hash1 = br.ReadUInt32();
             Unk02 = br.ReadUInt32();
             Unk03 = br.ReadSingle();
-            Unk04 = br.ReadSingle();
-            Unk05 = br.ReadSingle();
+            Reverb = br.ReadSingle();
+            Echo = br.ReadSingle();
             Unk06 = br.ReadUInt32();
             Unk07 = br.ReadSingle();
             Unk08 = br.ReadSingle();
@@ -6265,8 +6265,8 @@ namespace CodeWalker.GameFiles
             bw.Write(Hash1);
             bw.Write(Unk02);
             bw.Write(Unk03);
-            bw.Write(Unk04);
-            bw.Write(Unk05);
+            bw.Write(Reverb);
+            bw.Write(Echo);
             bw.Write(Unk06);
             bw.Write(Unk07);
             bw.Write(Unk08);
@@ -6284,8 +6284,8 @@ namespace CodeWalker.GameFiles
             RelXml.StringTag(sb, indent, "Hash1", RelXml.HashString(Hash1));
             RelXml.ValueTag(sb, indent, "Unk02", Unk02.ToString());
             RelXml.ValueTag(sb, indent, "Unk03", FloatUtil.ToString(Unk03));
-            RelXml.ValueTag(sb, indent, "Unk04", FloatUtil.ToString(Unk04));
-            RelXml.ValueTag(sb, indent, "Unk05", FloatUtil.ToString(Unk05));
+            RelXml.ValueTag(sb, indent, "Reverb", FloatUtil.ToString(Reverb));
+            RelXml.ValueTag(sb, indent, "Echo", FloatUtil.ToString(Echo));
             RelXml.StringTag(sb, indent, "Unk06", RelXml.HashString(Unk06));
             RelXml.ValueTag(sb, indent, "Unk07", FloatUtil.ToString(Unk07));
             RelXml.ValueTag(sb, indent, "Unk08", FloatUtil.ToString(Unk08));
@@ -6303,8 +6303,8 @@ namespace CodeWalker.GameFiles
             Hash1 = XmlRel.GetHash(Xml.GetChildInnerText(node, "Hash1"));
             Unk02 = Xml.GetChildUIntAttribute(node, "Unk02", "value");
             Unk03 = Xml.GetChildFloatAttribute(node, "Unk03", "value");
-            Unk04 = Xml.GetChildFloatAttribute(node, "Unk04", "value");
-            Unk05 = Xml.GetChildFloatAttribute(node, "Unk05", "value");
+            Reverb = Xml.GetChildFloatAttribute(node, "Reverb", "value");
+            Echo = Xml.GetChildFloatAttribute(node, "Echo", "value");
             Unk06 = XmlRel.GetHash(Xml.GetChildInnerText(node, "Unk06"));
             Unk07 = Xml.GetChildFloatAttribute(node, "Unk07", "value");
             Unk08 = Xml.GetChildFloatAttribute(node, "Unk08", "value");
@@ -14992,42 +14992,42 @@ namespace CodeWalker.GameFiles
             Unk08 = Xml.GetChildFloatAttribute(node, "Unk08", "value");
         }
     }
-    [TC(typeof(EXP))] public class Dat151Unk29 : Dat151RelData
+    [TC(typeof(EXP))] public class Dat151PedR2PVG : Dat151RelData
     {
         public FlagsUint Flags { get; set; }
         public MetaHash Unk01 { get; set; }//0
-        public MetaHash Unk02 { get; set; }
-        public MetaHash Unk03 { get; set; }
-        public MetaHash Unk04 { get; set; }
-        public MetaHash Unk05 { get; set; }
-        public MetaHash Unk06 { get; set; }//0
+        public MetaHash WhiPVG { get; set; }
+        public MetaHash BlaPVG { get; set; }
+        public MetaHash ChiPVG { get; set; }
+        public MetaHash LatPVG { get; set; }
+        public MetaHash Unk06 { get; set; }//0 I think this might be "ara", by analogy with texids
         public MetaHash Unk07 { get; set; }//0
         public MetaHash Unk08 { get; set; }//0
-        public MetaHash Unk09 { get; set; }
+        public MetaHash KorPVG { get; set; }
         public MetaHash Unk10 { get; set; }//0
-        public MetaHash Unk11 { get; set; }
+        public MetaHash PakPVG { get; set; }
         public int ItemCount { get; set; }
         public MetaHash[] Items { get; set; }
 
-        public Dat151Unk29(RelFile rel) : base(rel)
+        public Dat151PedR2PVG(RelFile rel) : base(rel)
         {
-            Type = Dat151RelType.Unk29;
+            Type = Dat151RelType.PedR2PVG;
             TypeID = (byte)Type;
         }
-        public Dat151Unk29(RelData d, BinaryReader br) : base(d, br)
+        public Dat151PedR2PVG(RelData d, BinaryReader br) : base(d, br)
         {
             Flags = br.ReadUInt32();
             Unk01 = br.ReadUInt32();//0
-            Unk02 = br.ReadUInt32();
-            Unk03 = br.ReadUInt32();
-            Unk04 = br.ReadUInt32();
-            Unk05 = br.ReadUInt32();
+            WhiPVG = br.ReadUInt32();
+            BlaPVG = br.ReadUInt32();
+            ChiPVG = br.ReadUInt32();
+            LatPVG = br.ReadUInt32();
             Unk06 = br.ReadUInt32();//0
             Unk07 = br.ReadUInt32();//0
             Unk08 = br.ReadUInt32();//0
-            Unk09 = br.ReadUInt32();
+            KorPVG = br.ReadUInt32();
             Unk10 = br.ReadUInt32();//0
-            Unk11 = br.ReadUInt32();
+            PakPVG = br.ReadUInt32();
             ItemCount = br.ReadInt32();
             Items = new MetaHash[ItemCount];
             for (int i = 0; i < ItemCount; i++)
@@ -15056,16 +15056,16 @@ namespace CodeWalker.GameFiles
 
             bw.Write(Flags);
             bw.Write(Unk01);
-            bw.Write(Unk02);
-            bw.Write(Unk03);
-            bw.Write(Unk04);
-            bw.Write(Unk05);
+            bw.Write(WhiPVG);
+            bw.Write(BlaPVG);
+            bw.Write(ChiPVG);
+            bw.Write(LatPVG);
             bw.Write(Unk06);
             bw.Write(Unk07);
             bw.Write(Unk08);
-            bw.Write(Unk09);
+            bw.Write(KorPVG);
             bw.Write(Unk10);
-            bw.Write(Unk11);
+            bw.Write(PakPVG);
             bw.Write(ItemCount);
             for (int i = 0; i < ItemCount; i++)
             {
@@ -15076,32 +15076,32 @@ namespace CodeWalker.GameFiles
         {
             RelXml.ValueTag(sb, indent, "Flags", "0x" + Flags.Hex);
             RelXml.StringTag(sb, indent, "Unk01", RelXml.HashString(Unk01));
-            RelXml.StringTag(sb, indent, "Unk02", RelXml.HashString(Unk02));
-            RelXml.StringTag(sb, indent, "Unk03", RelXml.HashString(Unk03));
-            RelXml.StringTag(sb, indent, "Unk04", RelXml.HashString(Unk04));
-            RelXml.StringTag(sb, indent, "Unk05", RelXml.HashString(Unk05));
+            RelXml.StringTag(sb, indent, "WhiPVG", RelXml.HashString(WhiPVG));
+            RelXml.StringTag(sb, indent, "BlaPVG", RelXml.HashString(BlaPVG));
+            RelXml.StringTag(sb, indent, "ChiPVG", RelXml.HashString(ChiPVG));
+            RelXml.StringTag(sb, indent, "LatPVG", RelXml.HashString(LatPVG));
             RelXml.StringTag(sb, indent, "Unk06", RelXml.HashString(Unk06));
             RelXml.StringTag(sb, indent, "Unk07", RelXml.HashString(Unk07));
             RelXml.StringTag(sb, indent, "Unk08", RelXml.HashString(Unk08));
-            RelXml.StringTag(sb, indent, "Unk09", RelXml.HashString(Unk09));
+            RelXml.StringTag(sb, indent, "KorPVG", RelXml.HashString(KorPVG));
             RelXml.StringTag(sb, indent, "Unk10", RelXml.HashString(Unk10));
-            RelXml.StringTag(sb, indent, "Unk11", RelXml.HashString(Unk11));
+            RelXml.StringTag(sb, indent, "PakPVG", RelXml.HashString(PakPVG));
             RelXml.WriteHashItemArray(sb, Items, indent, "Items");
         }
         public override void ReadXml(XmlNode node)
         {
             Flags = Xml.GetChildUIntAttribute(node, "Flags", "value");
             Unk01 = XmlRel.GetHash(Xml.GetChildInnerText(node, "Unk01"));
-            Unk02 = XmlRel.GetHash(Xml.GetChildInnerText(node, "Unk02"));
-            Unk03 = XmlRel.GetHash(Xml.GetChildInnerText(node, "Unk03"));
-            Unk04 = XmlRel.GetHash(Xml.GetChildInnerText(node, "Unk04"));
-            Unk05 = XmlRel.GetHash(Xml.GetChildInnerText(node, "Unk05"));
+            WhiPVG = XmlRel.GetHash(Xml.GetChildInnerText(node, "WhiPVG"));
+            BlaPVG = XmlRel.GetHash(Xml.GetChildInnerText(node, "BlaPVG"));
+            ChiPVG = XmlRel.GetHash(Xml.GetChildInnerText(node, "ChiPVG"));
+            LatPVG = XmlRel.GetHash(Xml.GetChildInnerText(node, "LatPVG"));
             Unk06 = XmlRel.GetHash(Xml.GetChildInnerText(node, "Unk06"));
             Unk07 = XmlRel.GetHash(Xml.GetChildInnerText(node, "Unk07"));
             Unk08 = XmlRel.GetHash(Xml.GetChildInnerText(node, "Unk08"));
-            Unk09 = XmlRel.GetHash(Xml.GetChildInnerText(node, "Unk09"));
+            KorPVG = XmlRel.GetHash(Xml.GetChildInnerText(node, "KorPVG"));
             Unk10 = XmlRel.GetHash(Xml.GetChildInnerText(node, "Unk10"));
-            Unk11 = XmlRel.GetHash(Xml.GetChildInnerText(node, "Unk11"));
+            PakPVG = XmlRel.GetHash(Xml.GetChildInnerText(node, "PakPVG"));
             Items = XmlRel.ReadHashItemArray(node, "Items");
             ItemCount = (Items?.Length ?? 0);
         }
@@ -20351,19 +20351,24 @@ namespace CodeWalker.GameFiles
     }
     [TC(typeof(EXP))] public class Dat10Synth : Dat10RelData
     {
+        // limits hardcoded in the .exe
+        public const int MaxStateBlocks = 64;
+        public const int MaxRegisters = 48;
+        public const int MaxBuffers = 16;
+        public const int MaxOutputs = 4;
+
         public int BuffersCount { get; set; }//buffers count           (4)  (for synth_ambient_aircon_full)
         public int RegistersCount { get; set; }//registers count       (21)
-        public int OutputsCount1 { get; set; }//outputs count?         (1)
-        public int OutputsCount2 { get; set; }//outputs count?         (1)
+        public int OutputsCount { get; set; }//outputs count           (1)
+        public byte[] OutputsIndices { get; set; }//outputs indices: determines the buffers used as outputs   (1, 0, 0, 0)
         public int BytecodeLength { get; set; }//bytecode length       (504)
-        public int StateBlocksCount { get; set; }//state blocks count? (18)
-        public int RuntimeCost { get; set; }//runtime cost?            (50)
-        public byte[] Bytecode { get; set; }//TODO: disassemble this!
-        public int ConstantsCount { get; set; }//constants count       (21)              
+        public int StateBlocksCount { get; set; }//state blocks count  (18)
+        public int RuntimeCost { get; set; }//runtime cost             (50)
+        public byte[] Bytecode { get; set; }
+        public int ConstantsCount { get; set; }//constants count       (21)
         public float[] Constants { get; set; }//constants (floats)
         public int VariablesCount { get; set; }//variables count       (8)
         public Dat10SynthVariable[] Variables { get; set; }//variables
-
 
         public Dat10Synth(RelFile rel) : base(rel)
         {
@@ -20374,11 +20379,11 @@ namespace CodeWalker.GameFiles
         {
             BuffersCount = br.ReadInt32();//buffers count           (4)  (for synth_ambient_aircon_full)
             RegistersCount = br.ReadInt32();//registers count       (21)
-            OutputsCount1 = br.ReadInt32();//outputs count?         (1)
-            OutputsCount2 = br.ReadInt32();//outputs count?         (1)
+            OutputsCount = br.ReadInt32();//outputs count           (1)
+            OutputsIndices = br.ReadBytes(MaxOutputs);//outputs indices      (1, 0, 0, 0)
             BytecodeLength = br.ReadInt32();//bytecode length       (504)
-            StateBlocksCount = br.ReadInt32();//state blocks count? (18)
-            RuntimeCost = br.ReadInt32();//runtime cost?            (50)
+            StateBlocksCount = br.ReadInt32();//state blocks count  (18)
+            RuntimeCost = br.ReadInt32();//runtime cost             (50)
             Bytecode = br.ReadBytes(BytecodeLength);
             ConstantsCount = br.ReadInt32(); //constants count      (21)              
             Constants = new float[ConstantsCount];//constants (floats)
@@ -20406,8 +20411,8 @@ namespace CodeWalker.GameFiles
 
             bw.Write(BuffersCount);
             bw.Write(RegistersCount);
-            bw.Write(OutputsCount1);
-            bw.Write(OutputsCount2);
+            bw.Write(OutputsCount);
+            bw.Write(OutputsIndices);
             bw.Write(BytecodeLength);
             bw.Write(StateBlocksCount);
             bw.Write(RuntimeCost);
@@ -20428,10 +20433,23 @@ namespace CodeWalker.GameFiles
             RelXml.ValueTag(sb, indent, "Flags", "0x" + Flags.Hex);
             RelXml.ValueTag(sb, indent, "BuffersCount", BuffersCount.ToString());
             RelXml.ValueTag(sb, indent, "RegistersCount", RegistersCount.ToString());
-            RelXml.ValueTag(sb, indent, "OutputsCount1", OutputsCount1.ToString());
-            RelXml.ValueTag(sb, indent, "OutputsCount2", OutputsCount2.ToString());
+            RelXml.ValueTag(sb, indent, "OutputsCount", OutputsCount.ToString());
+            RelXml.WriteRawArray(sb, OutputsIndices, indent, "OutputsIndices", "", arrRowSize: 4);
             RelXml.ValueTag(sb, indent, "StateBlocksCount", StateBlocksCount.ToString());
             RelXml.ValueTag(sb, indent, "RuntimeCost", RuntimeCost.ToString());
+
+            //string disassembly = Disassemble(Bytecode, Constants, true);
+
+            //RelXml.OpenTag(sb, indent, "Assembly");
+            //var reader = new StringReader(disassembly);
+            //string line;
+            //while ((line = reader.ReadLine()) != null)
+            //{
+            //    RelXml.Indent(sb, indent + 1);
+            //    sb.AppendLine(line);
+            //}
+            //RelXml.CloseTag(sb, indent, "Assembly");
+
             RelXml.WriteRawArray(sb, Bytecode, indent, "Bytecode", "", RelXml.FormatHexByte, 16);
             RelXml.WriteRawArray(sb, Constants, indent, "Constants", "", FloatUtil.ToString, 1);
             RelXml.WriteItemArray(sb, Variables, indent, "Variables");
@@ -20441,16 +20459,1387 @@ namespace CodeWalker.GameFiles
             Flags = Xml.GetChildUIntAttribute(node, "Flags", "value");
             BuffersCount = Xml.GetChildIntAttribute(node, "BuffersCount", "value");
             RegistersCount = Xml.GetChildIntAttribute(node, "RegistersCount", "value");
-            OutputsCount1 = Xml.GetChildIntAttribute(node, "OutputsCount1", "value");
-            OutputsCount2 = Xml.GetChildIntAttribute(node, "OutputsCount2", "value");
+            OutputsCount = Xml.GetChildIntAttribute(node, "OutputsCount", "value");
+            OutputsIndices = Xml.GetChildRawByteArray(node, "OutputsIndices", fromBase: 10);
             StateBlocksCount = Xml.GetChildIntAttribute(node, "StateBlocksCount", "value");
             RuntimeCost = Xml.GetChildIntAttribute(node, "RuntimeCost", "value");
+
+            //var assembly = Xml.GetChildInnerText(node, "Assembly");
+            //var assembled = Assemble(assembly);
+            //Bytecode = assembled.Bytecode;
+            //Constants = assembled.Constants.ToArray();
+
             Bytecode = Xml.GetChildRawByteArray(node, "Bytecode");
             BytecodeLength = (Bytecode?.Length ?? 0);
             Constants = Xml.GetChildRawFloatArray(node, "Constants");
             ConstantsCount = (Constants?.Length ?? 0);
             Variables = XmlRel.ReadItemArray<Dat10SynthVariable>(node, "Variables");
             VariablesCount = (Variables?.Length ?? 0);
+        }
+
+        public static string Disassemble(byte[] bytecode, float[] constants, bool includeBytecode)
+        {
+            var sb = new StringBuilder();
+            for (int i = 0; i < bytecode.Length;)
+            {
+                var inputsOutputs = bytecode[i + 0];
+                var outputs = inputsOutputs & 0xF;
+                var inputs = inputsOutputs >> 4;
+                var opcode = bytecode[i + 1];
+
+                if (Enum.IsDefined(typeof(Opcode), (Opcode)opcode))
+                {
+                    var size = SizeOf((Opcode)opcode, inputs, outputs);
+                    var inst = Decode(new BinaryReader(new MemoryStream(bytecode, i, size)));
+
+                    sb.Append(inst.ToString(constants));
+                    if (includeBytecode)
+                    {
+                        sb.Append("    ; ");
+                        for (int k = 0; k < size; k++)
+                        {
+                            sb.Append(bytecode[i + k].ToString("X2"));
+                            sb.Append(' ');
+                        }
+                    }
+                    sb.AppendLine();
+                    i += size;
+                }
+                else
+                {
+                    sb.AppendLine($"Unknown opcode {opcode:X2}");
+                    sb.Append("\t\t");
+                    for (int k = 0; k < 16 && (i + k) < bytecode.Length; k++)
+                    {
+                        sb.Append(bytecode[i + k].ToString("X2"));
+                        sb.Append(' ');
+                    }
+                    break;
+                }
+
+                if ((Opcode)opcode == Opcode.FINISH)
+                {
+                    break;
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        public static int SizeOf(Opcode opcode, int inputs, int outputs)
+        {
+            switch (opcode)
+            {
+                case Opcode.COPY_BUFFER: return 4 + (2 * outputs);
+                case Opcode.COPY_REGISTER: return 4 + (2 * outputs);
+                case Opcode.CONVERT_BUFFER_TO_DENORMALIZED: return 4;
+                case Opcode.CONVERT_SCALAR_TO_DENORMALIZED: return 6;
+                case Opcode.CONVERT_BUFFER_TO_NORMALIZED: return 4;
+                case Opcode.CONVERT_SCALAR_TO_NORMALIZED: return 6;
+                case Opcode.FIRST_OF_BUFFER: return 6;
+                case Opcode.MULTIPLY_BUFFER_BUFFER: return 6;
+                case Opcode.MULTIPLY_BUFFER_SCALAR: return 6;
+                case Opcode.MULTIPLY_SCALAR_SCALAR: return 8;
+                case Opcode.SUM_BUFFER_BUFFER: return 6;
+                case Opcode.SUM_BUFFER_SCALAR: return 6;
+                case Opcode.SUM_SCALAR_SCALAR: return 8;
+                case Opcode.SUBTRACT_BUFFER_BUFFER: return 6;
+                case Opcode.SUBTRACT_BUFFER_SCALAR: return 6;
+                case Opcode.SUBTRACT_SCALAR_BUFFER: return 8;
+                case Opcode.SUBTRACT_SCALAR_SCALAR: return 8;
+                case Opcode.DIVIDE_BUFFER_BUFFER: return 6;
+                case Opcode.DIVIDE_BUFFER_SCALAR: return 6;
+                case Opcode.DIVIDE_SCALAR_SCALAR: return 8;
+                case Opcode.RESCALE_BUFFER_BUFFER: return 12;
+                case Opcode.RESCALE_BUFFER_SCALAR: return 12;
+                case Opcode.RESCALE_SCALAR_SCALAR: return 14;
+                case Opcode.HARD_KNEE_BUFFER: return 6;
+                case Opcode.HARD_KNEE_SCALAR_SCALAR: return 8;
+                case Opcode.NOISE: return 4;
+                case Opcode.RANDOM: return 12;
+                case Opcode.ABS_BUFFER: return 4;
+                case Opcode.ABS_SCALAR: return 6;
+                case Opcode.FLOOR_BUFFER: return 4;
+                case Opcode.FLOOR_SCALAR: return 6;
+                case Opcode.CEIL_BUFFER: return 4;
+                case Opcode.CEIL_SCALAR: return 6;
+                case Opcode.ROUND_BUFFER: return 4;
+                case Opcode.ROUND_SCALAR: return 6;
+                case Opcode.SIGN_BUFFER: return 4;
+                case Opcode.SIGN_SCALAR: return 6;
+                case Opcode.MODULO_BUFFER: return 6;
+                case Opcode.MODULO_SCALAR: return 8;
+                case Opcode.POW_SCALAR: return 8;
+                case Opcode.POW_BUFFER: return 6;
+                case Opcode.MAX_SCALAR: return 10;
+                case Opcode.MAX_BUFFER: return 8;
+                case Opcode.COMPRESS_BUFFER: return 14;
+                case Opcode._UNUSED_2C: return 2; // shouldn't get here
+                case Opcode.LERP_BUFFER: return 8;
+                case Opcode.LERP_BUFFER_2: return 10;
+                case Opcode.LERP_SCALAR: return 10;
+                case Opcode.HARD_CLIP_BUFFER_BUFFER: return 6;
+                case Opcode.HARD_CLIP_BUFFER_SCALAR: return 6;
+                case Opcode.HARD_CLIP_SCALAR_SCALAR: return 8;
+                case Opcode.SOFT_CLIP_BUFFER_BUFFER: return 6;
+                case Opcode.SOFT_CLIP_BUFFER_SCALAR: return 6;
+                case Opcode.SOFT_CLIP_SCALAR_SCALAR: return 8;
+                case Opcode.ENVELOPE_FOLLOWER_BUFFER: return 10;
+                case Opcode.ENVELOPE_FOLLOWER_SCALAR: return 12;
+                case Opcode.BiquadCoefficients_LowPass_1: return 16;
+                case Opcode.BiquadCoefficients_HighPass_1: return 16;
+                case Opcode.BiquadCoefficients_BandPass: return 16;
+                case Opcode.BiquadCoefficients_BandStop: return 16;
+                case Opcode.BiquadCoefficients_LowPass_2: return 16;
+                case Opcode.BiquadCoefficients_HighPass_2: return 16;
+                case Opcode.BiquadCoefficients_PeakingEQ: return 18;
+                case Opcode.BiquadProcess_2Pole: return 16;
+                case Opcode.BiquadProcess_4Pole: return 16;
+                case Opcode.OnePole_LPF_BUFFER_BUFFER: return 8;
+                case Opcode.OnePole_LPF_BUFFER_SCALAR: return 8;
+                case Opcode.OnePole_LPF_SCALAR_SCALAR: return 10;
+                case Opcode.OnePole_HPF_BUFFER_BUFFER: return 8;
+                case Opcode.OnePole_HPF_BUFFER_SCALAR: return 8;
+                case Opcode.OnePole_HPF_SCALAR_SCALAR: return 10;
+                case Opcode.OSC_RAMP_BUFFER_BUFFER: return 6;
+                case Opcode.OSC_RAMP_BUFFER_SCALAR: return 8;
+                case Opcode.OSC_RAMP_SCALAR: return 8;
+                case Opcode.SINE_BUFFER: return 4;
+                case Opcode.SINE: return 6;
+                case Opcode.COSINE_BUFFER: return 4;
+                case Opcode.COSINE: return 6;
+                case Opcode.TRIANGLE_BUFFER: return 4;
+                case Opcode.TRIANGLE: return 6;
+                case Opcode.SQUARE_BUFFER: return 4;
+                case Opcode.SQUARE: return 6;
+                case Opcode.SAW_BUFFER: return 4;
+                case Opcode.SAW: return 6;
+                case Opcode.TRIGGER_LATCH: return 10;
+
+                case Opcode.ENVELOPE_GEN__R_LINEAR_T_INTERRUPTIBLE:
+                case Opcode.ENVELOPE_GEN__R_LINEAR_T_ONE_SHOT:
+                case Opcode.ENVELOPE_GEN__R_LINEAR_T_RETRIGGER:
+                case Opcode.ENVELOPE_GEN__R_EXP_T_INTERRUPTIBLE:
+                case Opcode.ENVELOPE_GEN__R_EXP_T_ONE_SHOT:
+                case Opcode.ENVELOPE_GEN__R_EXP_T_RETRIGGER:
+                    return outputs == 2 ? 22 : 20;
+
+                case Opcode.TIMED_TRIGGER__T_INTERRUPTIBLE:
+                case Opcode.TIMED_TRIGGER__T_ONE_SHOT:
+                case Opcode.TIMED_TRIGGER__T_RETRIGGER:
+                    return 26;
+
+                case Opcode.READ_VARIABLE: return 6;
+                case Opcode.STOP: return 4;
+
+                case Opcode.READ_INPUT_BUFFER0:
+                case Opcode.READ_INPUT_BUFFER1:
+                case Opcode.READ_INPUT_BUFFER2:
+                case Opcode.READ_INPUT_BUFFER3:
+                case Opcode.READ_INPUT_BUFFER4:
+                case Opcode.READ_INPUT_BUFFER5:
+                case Opcode.READ_INPUT_BUFFER6:
+                case Opcode.READ_INPUT_BUFFER7:
+                    return 4;
+
+                case Opcode.NOTE_TO_FREQUENCY_SCALAR: return 6;
+                case Opcode.NOTE_TO_FREQUENCY_BUFFER: return 4;
+                case Opcode.SAMPLE_AND_HOLD: return 10;
+                case Opcode.DECIMATE_BUFFER: return 10;
+
+                case Opcode.COUNTER:
+                case Opcode.COUNTER_TRIGGER:
+                    return 14;
+
+                case Opcode.GATE_BUFFER_BUFFER: return 6;
+                case Opcode.GATE_BUFFER_SCALAR: return 6;
+                case Opcode.GATE_SCALAR_SCALAR: return 8;
+
+                case Opcode.SMALL_DELAY_FRAC:
+                case Opcode.SMALL_DELAY_NON_INTERP:
+                    return 4 + (inputs == 3 ? 6 : 4);
+
+                case Opcode.SMALL_DELAY_FRAC_FEEDBACK:
+                case Opcode.SMALL_DELAY_NON_INTERP_FEEDBACK:
+                    return 10;
+
+                case Opcode.TRIGGER_DIFF: return 10;
+                case Opcode.RANDOM_ON_INIT: return 10;
+                case Opcode.FILL_BUFFER: return 6;
+                case Opcode.AWProcess: return 10;
+                case Opcode.LERP_BUFFER_BUFFER: return 8;
+
+                case Opcode.BiquadCoefficients_HighSelf_1:
+                case Opcode.BiquadCoefficients_HighSelf_2:
+                case Opcode.BiquadCoefficients_LowSelf_1:
+                case Opcode.BiquadCoefficients_LowSelf_2:
+                    return 18;
+
+                case Opcode.SWITCH_NORM_BUFFER:
+                case Opcode.SWITCH_INDEX_BUFFER:
+                case Opcode.SWITCH_LERP_BUFFER:
+                case Opcode.SWITCH_EQUAL_POWER_BUFFFER:
+                    return 6 + (inputs - 2) * 2;
+
+                case Opcode.SWITCH_NORM_SCALAR:
+                case Opcode.SWITCH_INDEX_SCALAR:
+                case Opcode.SWITCH_LERP_SCALAR:
+                case Opcode.SWITCH_EQUAL_POWER_SCALAR:
+                    return 6 + (inputs - 1) * 2;
+
+                case Opcode.AllpassProcess_BUFFER_SCALAR: return 8;
+                case Opcode.AllpassProcess_BUFFER_BUFFER: return 8;
+
+                case Opcode.FINISH: return 2;
+            }
+
+            throw new NotImplementedException($"SizeOf '{opcode}' is not implemented");
+        }
+
+        public class AssembleResult
+        {
+            public byte[] Bytecode { get; set; } = Array.Empty<byte>();
+            public int BuffersCount { get; set; }
+            public int RegistersCount { get; set; }
+            public int StateBlocksCount { get; set; }
+            public int VariablesCount { get; set; }
+            public List<float> Constants { get; set; } = new List<float>();
+        }
+
+        public static AssembleResult Assemble(string assembly, Action<string> onError = null)
+        {
+            var result = new AssembleResult();
+
+            using (var reader = new StringReader(assembly))
+            using (var mem = new MemoryStream())
+            using (var bw = new BinaryWriter(mem))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    var inst = Parse(line, result, onError ?? (_ => {}));
+                    inst?.Encode(bw);
+                }
+
+                const int Align = 4;
+                var padding = (Align - (mem.Length % Align)) % Align;
+                if (padding > 0) bw.Write(new byte[padding]);
+
+                result.Bytecode = mem.ToArray();
+                return result;
+            }
+        }
+
+        private static Instruction? Parse(string line, AssembleResult result, Action<string> onError)
+        {
+            var commentStart = line.IndexOf(';');
+            if (commentStart != -1)
+            {
+                // remove comment
+                line = line.Substring(0, commentStart);
+            }
+
+            line = line.Trim();
+            if (line.Length == 0)
+            {
+                return null;
+            }
+
+            var opcodeName = line.Substring(0, line.TakeWhile(c => !char.IsWhiteSpace(c)).Count());
+            
+            if (!Enum.TryParse<Opcode>(opcodeName, out var opcode))
+            {
+                onError($"Unknown opcode '{opcodeName}'");
+                return null;
+            }
+
+            if (line.Length - opcodeName.Length <= 0)
+            {
+                onError("Missing input/output parameters");
+                return null;
+            }
+
+            line = line.Substring(opcodeName.Length);
+            var parts = line.Split(new[] { "=>" }, StringSplitOptions.None);
+            if (parts.Length != 2)
+            {
+                onError("Missing input or output parameters");
+                return null;
+            }
+
+            var inputs = parts[0].Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+
+            var stateBlockEnd = parts[1].LastIndexOf(']');
+            var stateBlockStart = parts[1].IndexOf('[');
+            string stateBlockStr = null;
+            var hasStateBlock = stateBlockStart != -1;
+            var stateBlockUsed = false;
+
+            if ((stateBlockStart == -1) != (stateBlockEnd == -1))
+            {
+                onError("Mismatched brackets");
+                return null;
+            }
+            else
+            {
+                stateBlockStr = hasStateBlock ? parts[1].Substring(stateBlockStart + 1, stateBlockEnd - stateBlockStart - 1) : null;
+            }
+
+            var outputs = parts[1].Substring(0, hasStateBlock ? stateBlockStart : parts[1].Length)
+                                  .Split(',')
+                                  .Select(s => s.Trim())
+                                  .Where(s => !string.IsNullOrWhiteSpace(s))
+                                  .ToArray();
+
+            var currInputIndex = 0;
+            var currOutputIndex = 0;
+            var parameters = new List<Parameter>();
+
+            void Param(ParameterType type)
+            {
+                var currInput = Parameter.IsInputType(type) ? inputs[currInputIndex] : null;
+                var currOutput = Parameter.IsOutputType(type) ? outputs[currOutputIndex] : null;
+                ushort paramValue = 0xFFFF;
+
+                switch (type)
+                {
+                    case ParameterType.InputBuffer: paramValue = ParseBuffer(currInput, result, onError); break;
+                    case ParameterType.InputRegister: paramValue = ParseRegister(currInput, result, onError); break;
+                    case ParameterType.InputScalar:
+                        paramValue = currInput[0] == 'R' ?
+                                        ParseRegister(currInput, result, onError) :
+                                        ParseConstant(currInput, result, onError);
+                        break;
+                    case ParameterType.InputVariable: paramValue = ParseVariable(currInput, result, onError); break;
+                    case ParameterType.OutputBuffer: paramValue = ParseBuffer(currOutput, result, onError); break;
+                    case ParameterType.OutputRegister: paramValue = ParseRegister(currOutput, result, onError); break;
+                    case ParameterType.InputOutputBuffer:
+                        if (currInput != currOutput)
+                        {
+                            onError($"Expected same input/output buffer: input = '{currInput}', output = '{currOutput}'");
+                        }
+
+                        paramValue = ParseBuffer(currInput, result, onError);
+                        break;
+                    case ParameterType.StateBlock:
+                        if (!hasStateBlock)
+                        {
+                            onError($"Opcode '{opcodeName}' requires a state block");
+                        }
+
+                        if (!byte.TryParse(stateBlockStr, out var stateBlockIndex))
+                        {
+                            onError($"Invalid state block: '{stateBlockStr}' cannot be parsed as an integer");
+                        }
+
+                        if (stateBlockIndex >= MaxStateBlocks)
+                        {
+                            onError($"Invalid state block: {stateBlockIndex} is out of bounds (max: {MaxStateBlocks})");
+                        }
+
+                        result.StateBlocksCount = Math.Max(stateBlockIndex + 1, result.StateBlocksCount);
+                        paramValue = stateBlockIndex;
+                        stateBlockUsed = true;
+                        break;
+                    case ParameterType.Ignored:
+                        // the game doesn't use this value, but existing synths use the same value as the first param
+                        paramValue = parameters[0].Value;
+                        break;
+                    default: throw new NotImplementedException();
+                }
+
+                if (Parameter.IsInputType(type))
+                {
+                    currInputIndex++;
+                }
+
+                if (Parameter.IsOutputType(type))
+                {
+                    currOutputIndex++;
+                }
+
+                parameters.Add(new Parameter(type, paramValue));
+            }
+
+            bool IsInputScalar() => inputs[currInputIndex][0] != 'B';
+
+            var numInputs = inputs.Length;
+            var numOutputs = outputs.Length;
+
+            if (opcode == Opcode.COPY_BUFFER || opcode == Opcode.COPY_REGISTER)
+            {
+                // count the ignored param as output
+                numOutputs++;
+            }
+
+            HandleOpcode(opcode, numInputs, numOutputs, Param, IsInputScalar);
+
+            if (!stateBlockUsed && hasStateBlock)
+            {
+                onError($"State block specified but not required by opcode '{opcodeName}'");
+            }
+
+            if (currInputIndex < inputs.Length)
+            {
+                onError($"Too many inputs for opcode '{opcode}'");
+            }
+
+            if (currOutputIndex < outputs.Length)
+            {
+                onError($"Too many outputs for opcode '{opcode}'");
+            }
+
+            return new Instruction
+            {
+                Opcode = opcode,
+                InputsOutputs = opcode != Opcode.FINISH ? (byte)((numInputs << 4) | numOutputs) : (byte)0xFF,
+                Parameters = parameters.ToArray(),
+            };
+        }
+
+        private static ushort ParseVariable(string str, AssembleResult result, Action<string> onError)
+        {
+            if (str[0] != 'V')
+            {
+                onError($"Expected a variable, found '{str}'");
+                return 0;
+            }
+
+            var indexStr = str.Substring(1);
+            if (!byte.TryParse(indexStr, out var index))
+            {
+                onError($"Invalid variable: '{indexStr}' cannot be parsed as an integer");
+            }
+
+            result.VariablesCount = Math.Max(index + 1, result.VariablesCount);
+            return (ushort)(0x300 | index);
+        }
+
+        private static ushort ParseConstant(string str, AssembleResult result, Action<string> onError)
+        {
+            if (!FloatUtil.TryParse(str, out var constantValue))
+            {
+                onError($"Invalid constant: '{str}' cannot be parsed as a float");
+            }
+
+            byte constantId;
+            if (constantValue == 0.0f)
+            {
+                constantId = 0;
+            }
+            else if (constantValue == 1.0f)
+            {
+                constantId = 1;
+            }
+            else
+            {
+                var constants = result.Constants;
+
+                // This is not exactly how R* compiler handles constants. Sometimes it reuses constants and sometimes it doesn't,
+                // here we will always reuse the constant, so it won't generate the exact same bytecode when reassembling
+                var constantIndex = -1;
+                for (int i = 0; i < constants.Count; i++)
+                {
+                    if (constants[i] == constantValue)
+                    {
+                        constantIndex = i;
+                        break;
+                    }
+                }
+
+                if (constantIndex == -1)
+                {
+                    constantIndex = constants.Count;
+                    constants.Add(constantValue);
+                }
+
+                constantId = (byte)(constantIndex + 2);
+            }
+
+            return (ushort)(0x200 | constantId);
+        }
+
+        private static ushort ParseRegister(string str, AssembleResult result, Action<string> onError)
+        {
+            if (str[0] != 'R')
+            {
+                onError($"Expected a register, found '{str}'");
+                return 0;
+            }
+
+            var indexStr = str.Substring(1);
+            if (!byte.TryParse(indexStr, out var index))
+            {
+                onError($"Invalid register: '{indexStr}' cannot be parsed as an integer");
+            }
+
+            if (index >= MaxRegisters)
+            {
+                // the synth 'dlc_xm_superweapon_xxx' from 'update\update.rpf\x64\audio\config\optamp.dat10.rel' uses 72 registers even
+                // though it is above the hardcoded .exe limit, so don't fail to allow to re-assemble the file.
+                // The game just ignores this synth and uses the one with the same name from 'dlcchristmas2017_amp.dat10'
+                // onError($"Invalid register: {registerIndex} is out of bounds (max: {MaxRegisters})");
+            }
+
+            result.RegistersCount = Math.Max(index + 1, result.RegistersCount);
+            return (ushort)(0x100 | index);
+        }
+
+        private static ushort ParseBuffer(string str, AssembleResult result, Action<string> onError)
+        {
+            if (str[0] != 'B')
+            {
+                onError($"Expected a buffer, found '{str}'");
+                return 0;
+            }
+
+            var indexStr = str.Substring(1);
+            if (!byte.TryParse(indexStr, out var index))
+            {
+                onError($"Invalid buffer: '{indexStr}' cannot be parsed as an integer");
+            }
+
+            if (index >= MaxBuffers)
+            {
+                onError($"Invalid buffer: {index} is out of bounds (max: {MaxBuffers})");
+            }
+
+            result.BuffersCount = Math.Max(index + 1, result.BuffersCount);
+            return index;
+        }
+
+        public static Instruction Decode(BinaryReader bytecode)
+        {
+            var result = new Instruction();
+            result.InputsOutputs = bytecode.ReadByte();
+            result.Opcode = (Opcode)bytecode.ReadByte();
+            var outputs = result.InputsOutputs & 0xF;
+            var inputs = result.InputsOutputs >> 4;
+            var parameters = new List<Parameter>(8);
+
+            void Param(ParameterType type) => parameters.Add(new Parameter(type, bytecode.ReadUInt16()));
+            bool IsInputScalar()
+            {
+                var inputVal = bytecode.ReadUInt16();
+                bytecode.BaseStream.Seek(-sizeof(ushort), SeekOrigin.Current);
+                return (inputVal & 0xFF00) != 0;
+            }
+
+            HandleOpcode(result.Opcode, inputs, outputs, Param, IsInputScalar);
+
+            if (bytecode.BaseStream.Position != bytecode.BaseStream.Length)
+            { }
+            result.Parameters = parameters.ToArray();
+            return result;
+        }
+
+        private static void HandleOpcode(Opcode opcode, int inputs, int outputs, Action<ParameterType> cb, Func<bool> isInputScalar)
+        {
+            switch (opcode)
+            {
+                case Opcode.COPY_BUFFER:
+                    cb(ParameterType.InputBuffer);
+                    for (int i = 0; i < (outputs - 1); i++)
+                    {
+                        cb(ParameterType.OutputBuffer);
+                    }
+                    cb(ParameterType.Ignored); // not used by the game, same value as the input buffer
+                    break;
+
+                case Opcode.COPY_REGISTER:
+                    cb(ParameterType.InputRegister);
+                    for (int i = 0; i < (outputs - 1); i++)
+                    {
+                        cb(ParameterType.OutputRegister);
+                    }
+                    cb(ParameterType.Ignored); // not used by the game, same value as the input register
+                    break;
+
+                case Opcode.CONVERT_BUFFER_TO_DENORMALIZED:
+                case Opcode.CONVERT_BUFFER_TO_NORMALIZED:
+                    cb(ParameterType.InputOutputBuffer);
+                    break;
+
+                case Opcode.CONVERT_SCALAR_TO_DENORMALIZED:
+                case Opcode.CONVERT_SCALAR_TO_NORMALIZED:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    break;
+
+                case Opcode.FIRST_OF_BUFFER:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputBuffer);
+                    break;
+
+                case Opcode.MULTIPLY_BUFFER_BUFFER:
+                case Opcode.SUM_BUFFER_BUFFER:
+                case Opcode.SUBTRACT_BUFFER_BUFFER:
+                case Opcode.DIVIDE_BUFFER_BUFFER:
+                case Opcode.HARD_CLIP_BUFFER_BUFFER:
+                case Opcode.SOFT_CLIP_BUFFER_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputBuffer);
+                    break;
+
+                case Opcode.MULTIPLY_BUFFER_SCALAR:
+                case Opcode.SUM_BUFFER_SCALAR:
+                case Opcode.SUBTRACT_BUFFER_SCALAR:
+                case Opcode.DIVIDE_BUFFER_SCALAR:
+                case Opcode.HARD_CLIP_BUFFER_SCALAR:
+                case Opcode.SOFT_CLIP_BUFFER_SCALAR:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputScalar);
+                    break;
+
+                case Opcode.SUBTRACT_SCALAR_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.Ignored); // not used by the game
+                    break;
+
+                case Opcode.MULTIPLY_SCALAR_SCALAR:
+                case Opcode.SUM_SCALAR_SCALAR:
+                case Opcode.SUBTRACT_SCALAR_SCALAR:
+                case Opcode.DIVIDE_SCALAR_SCALAR:
+                case Opcode.HARD_CLIP_SCALAR_SCALAR:
+                case Opcode.SOFT_CLIP_SCALAR_SCALAR:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    break;
+
+                case Opcode.RESCALE_BUFFER_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputBuffer); // original min
+                    cb(ParameterType.InputBuffer); // original max
+                    cb(ParameterType.InputBuffer); // new min
+                    cb(ParameterType.InputBuffer); // new max
+                    break;
+
+                case Opcode.RESCALE_BUFFER_SCALAR:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputScalar); // original min
+                    cb(ParameterType.InputScalar); // original max
+                    cb(ParameterType.InputScalar); // new min
+                    cb(ParameterType.InputScalar); // new max
+                    break;
+
+                case Opcode.RESCALE_SCALAR_SCALAR:
+                    cb(ParameterType.OutputRegister); // result
+                    cb(ParameterType.InputScalar); // value
+                    cb(ParameterType.InputScalar); // original min
+                    cb(ParameterType.InputScalar); // original max
+                    cb(ParameterType.InputScalar); // new min
+                    cb(ParameterType.InputScalar); // new max
+                    break;
+
+                case Opcode.HARD_KNEE_SCALAR_SCALAR:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    break;
+
+                case Opcode.NOISE:
+                    cb(ParameterType.OutputBuffer);
+                    break;
+
+                case Opcode.RANDOM:
+                    cb(ParameterType.OutputRegister); // result
+                    cb(ParameterType.InputScalar); // next: if >= 1.0 then generate a new random value; else return the last value
+                    cb(ParameterType.InputScalar); // min
+                    cb(ParameterType.InputScalar); // max
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.ABS_BUFFER:
+                case Opcode.FLOOR_BUFFER:
+                case Opcode.CEIL_BUFFER:
+                case Opcode.ROUND_BUFFER:
+                case Opcode.SIGN_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    break;
+
+                case Opcode.ABS_SCALAR:
+                case Opcode.FLOOR_SCALAR:
+                case Opcode.CEIL_SCALAR:
+                case Opcode.ROUND_SCALAR:
+                case Opcode.SIGN_SCALAR:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    break;
+
+                case Opcode.HARD_KNEE_BUFFER:
+                case Opcode.MODULO_BUFFER:
+                case Opcode.POW_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    if (isInputScalar())
+                    {
+                        cb(ParameterType.InputScalar);
+                    }
+                    else
+                    {
+                        cb(ParameterType.InputBuffer);
+                    }
+                    break;
+
+                case Opcode.MODULO_SCALAR:
+                case Opcode.POW_SCALAR:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    break;
+
+                case Opcode.MAX_SCALAR:
+                    cb(ParameterType.OutputRegister); // result: max value between the absolute value of the input and the stored value
+                    cb(ParameterType.InputScalar); // input
+                    cb(ParameterType.InputScalar); // trigger: if >= 1.0 then compare to 0.0 instead of stored value
+                    cb(ParameterType.StateBlock);  // stores the last result value
+                    break;
+
+                case Opcode.MAX_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.COMPRESS_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode._UNUSED_2C: // shouldn't get here
+                    break;
+
+                case Opcode.LERP_BUFFER:
+                    cb(ParameterType.InputOutputBuffer); // t
+                    cb(ParameterType.InputScalar); // min
+                    cb(ParameterType.InputScalar); // max
+                    break;
+
+                case Opcode.LERP_BUFFER_2:
+                    cb(ParameterType.OutputBuffer); // this buffer should be the same as one of the input buffers
+                    cb(ParameterType.InputScalar); // t
+                    cb(ParameterType.InputBuffer);
+                    cb(ParameterType.InputBuffer);
+                    break;
+
+                case Opcode.LERP_SCALAR:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar); // t
+                    cb(ParameterType.InputScalar); // min
+                    cb(ParameterType.InputScalar); // max
+                    break;
+
+                case Opcode.ENVELOPE_FOLLOWER_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.ENVELOPE_FOLLOWER_SCALAR:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.BiquadCoefficients_LowPass_1:
+                case Opcode.BiquadCoefficients_HighPass_1:
+                case Opcode.BiquadCoefficients_BandPass:
+                case Opcode.BiquadCoefficients_BandStop:
+                case Opcode.BiquadCoefficients_LowPass_2:
+                case Opcode.BiquadCoefficients_HighPass_2:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    break;
+
+                case Opcode.BiquadCoefficients_PeakingEQ:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    break;
+
+                case Opcode.BiquadProcess_2Pole:
+                case Opcode.BiquadProcess_4Pole:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.OnePole_LPF_BUFFER_BUFFER:
+                case Opcode.OnePole_HPF_BUFFER_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputBuffer);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.OnePole_LPF_BUFFER_SCALAR:
+                case Opcode.OnePole_HPF_BUFFER_SCALAR:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.OnePole_LPF_SCALAR_SCALAR:
+                case Opcode.OnePole_HPF_SCALAR_SCALAR:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.OSC_RAMP_BUFFER_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.OSC_RAMP_BUFFER_SCALAR:
+                    cb(ParameterType.OutputBuffer);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.OSC_RAMP_SCALAR:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.SINE_BUFFER:
+                case Opcode.COSINE_BUFFER:
+                case Opcode.TRIANGLE_BUFFER:
+                case Opcode.SQUARE_BUFFER:
+                case Opcode.SAW_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    break;
+
+                case Opcode.SINE:
+                case Opcode.COSINE:
+                case Opcode.TRIANGLE:
+                case Opcode.SQUARE:
+                case Opcode.SAW:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    break;
+
+                case Opcode.TRIGGER_LATCH:
+                    cb(ParameterType.OutputRegister);
+                    if (isInputScalar())
+                    {
+                        cb(ParameterType.InputScalar);
+                        cb(ParameterType.InputScalar);
+                    }
+                    else
+                    {
+                        cb(ParameterType.InputBuffer);
+                        if (isInputScalar())
+                        {
+                            cb(ParameterType.InputScalar);
+                        }
+                        else
+                        {
+                            cb(ParameterType.InputBuffer);
+                        }
+                    }
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.ENVELOPE_GEN__R_LINEAR_T_INTERRUPTIBLE:
+                case Opcode.ENVELOPE_GEN__R_LINEAR_T_ONE_SHOT:
+                case Opcode.ENVELOPE_GEN__R_LINEAR_T_RETRIGGER:
+                case Opcode.ENVELOPE_GEN__R_EXP_T_INTERRUPTIBLE:
+                case Opcode.ENVELOPE_GEN__R_EXP_T_ONE_SHOT:
+                case Opcode.ENVELOPE_GEN__R_EXP_T_RETRIGGER:
+                    cb(ParameterType.OutputBuffer); // envelope
+                    if (outputs == 2)
+                    {
+                        cb(ParameterType.OutputRegister); // finished
+                    }
+                    cb(ParameterType.InputScalar); // predelay
+                    cb(ParameterType.InputScalar); // attack
+                    cb(ParameterType.InputScalar); // decay
+                    cb(ParameterType.InputScalar); // sustain
+                    cb(ParameterType.InputScalar); // hold
+                    cb(ParameterType.InputScalar); // release
+                    cb(ParameterType.InputScalar); // trigger
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.TIMED_TRIGGER__T_INTERRUPTIBLE:
+                case Opcode.TIMED_TRIGGER__T_ONE_SHOT:
+                case Opcode.TIMED_TRIGGER__T_RETRIGGER:
+                    cb(ParameterType.OutputRegister); // finished
+                    cb(ParameterType.OutputRegister); // attack active
+                    cb(ParameterType.OutputRegister); // decay active
+                    cb(ParameterType.OutputRegister); // hold active
+                    cb(ParameterType.OutputRegister); // release active
+                    cb(ParameterType.InputScalar); // trigger
+                    cb(ParameterType.InputScalar); // predelay
+                    cb(ParameterType.InputScalar); // attack
+                    cb(ParameterType.InputScalar); // decay
+                    cb(ParameterType.InputScalar); // hold
+                    cb(ParameterType.InputScalar); // release
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.READ_VARIABLE:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputVariable);
+                    break;
+
+                case Opcode.STOP:
+                    cb(ParameterType.InputScalar); // trigger: if >= 1.0 then stop executing the synth
+                    break;
+
+                case Opcode.READ_INPUT_BUFFER0: // used for DSP effects
+                case Opcode.READ_INPUT_BUFFER1:
+                case Opcode.READ_INPUT_BUFFER2:
+                case Opcode.READ_INPUT_BUFFER3:
+                case Opcode.READ_INPUT_BUFFER4:
+                case Opcode.READ_INPUT_BUFFER5:
+                case Opcode.READ_INPUT_BUFFER6:
+                case Opcode.READ_INPUT_BUFFER7:
+                    cb(ParameterType.OutputBuffer);
+                    break;
+
+                case Opcode.NOTE_TO_FREQUENCY_SCALAR:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    break;
+
+                case Opcode.NOTE_TO_FREQUENCY_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    break;
+
+                case Opcode.SAMPLE_AND_HOLD:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar); // value
+                    cb(ParameterType.InputScalar); // trigger: if >= 1.0 then store value; else return stored value
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.DECIMATE_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.COUNTER:
+                case Opcode.COUNTER_TRIGGER:
+                    cb(ParameterType.OutputRegister); // result: COUNTER: counter value
+                                                      //         COUNTER_TRIGGER: when counter = 0 (due to zero or max params), returns 1; otherwise 0
+                    cb(ParameterType.InputScalar); // zero:     if >= 1.0 then counter = 0
+                    cb(ParameterType.InputScalar); // add:      if >= 1.0 then counter += 1
+                    cb(ParameterType.InputScalar); // subtract: if >= 1.0 then counter -= 1
+                    cb(ParameterType.InputScalar); // max:      if >= 0.0 && counter >= max then counter = 0
+                    cb(ParameterType.StateBlock); // stores the counter
+                    break;
+
+                case Opcode.GATE_BUFFER_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputBuffer);
+                    break;
+
+                case Opcode.GATE_BUFFER_SCALAR:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputScalar);
+                    break;
+
+                case Opcode.GATE_SCALAR_SCALAR:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    break;
+
+                case Opcode.SMALL_DELAY_FRAC:
+                case Opcode.SMALL_DELAY_NON_INTERP:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputScalar);
+                    if (inputs == 3)
+                    {
+                        // the game ignores this value and in the files it is always 0x200,
+                        // but keep it to generate the exact same bytecode when reassembling
+                        cb(ParameterType.InputScalar); 
+                    }
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.SMALL_DELAY_FRAC_FEEDBACK:
+                case Opcode.SMALL_DELAY_NON_INTERP_FEEDBACK:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.TRIGGER_DIFF:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.RANDOM_ON_INIT: // like RANDOM, but only generates the random value once, then it always returns the same value
+                    cb(ParameterType.OutputRegister); // result
+                    cb(ParameterType.InputScalar); // min
+                    cb(ParameterType.InputScalar); // max
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.FILL_BUFFER: // sets the whole buffer to the same value
+                    cb(ParameterType.OutputBuffer); // dest
+                    cb(ParameterType.InputScalar); // value
+                    break;
+
+                case Opcode.AWProcess:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputBuffer);
+                    cb(ParameterType.InputBuffer);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.LERP_BUFFER_BUFFER:
+                    cb(ParameterType.InputOutputBuffer); // t
+                    cb(ParameterType.InputBuffer); // min
+                    cb(ParameterType.InputBuffer); // max
+                    break;
+
+                case Opcode.BiquadCoefficients_HighSelf_1:
+                case Opcode.BiquadCoefficients_HighSelf_2:
+                case Opcode.BiquadCoefficients_LowSelf_1:
+                case Opcode.BiquadCoefficients_LowSelf_2:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.InputScalar);
+                    break;
+
+                case Opcode.SWITCH_NORM_BUFFER:
+                case Opcode.SWITCH_INDEX_BUFFER:
+                case Opcode.SWITCH_LERP_BUFFER:
+                case Opcode.SWITCH_EQUAL_POWER_BUFFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputScalar);
+                    for (int i = 0; i < (inputs - 2); i++)
+                    {
+                        cb(ParameterType.InputBuffer);
+                    }
+                    break;
+
+                case Opcode.SWITCH_NORM_SCALAR:
+                case Opcode.SWITCH_INDEX_SCALAR:
+                case Opcode.SWITCH_LERP_SCALAR:
+                case Opcode.SWITCH_EQUAL_POWER_SCALAR:
+                    cb(ParameterType.OutputRegister);
+                    cb(ParameterType.InputScalar);
+                    for (int i = 0; i < (inputs - 1); i++)
+                    {
+                        cb(ParameterType.InputScalar);
+                    }
+                    break;
+
+                case Opcode.AllpassProcess_BUFFER_SCALAR:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputScalar);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.AllpassProcess_BUFFER_BUFFER:
+                    cb(ParameterType.InputOutputBuffer);
+                    cb(ParameterType.InputBuffer);
+                    cb(ParameterType.StateBlock);
+                    break;
+
+                case Opcode.FINISH:
+                    break;
+            }
+        }
+
+        public struct Instruction
+        {
+            public byte InputsOutputs { get; set; }
+            public Opcode Opcode { get; set; }
+            public Parameter[] Parameters { get; set; }
+
+            public void Encode(BinaryWriter bw)
+            {
+                bw.Write(InputsOutputs);
+                bw.Write((byte)Opcode);
+                foreach (var p in Parameters)
+                {
+                    bw.Write(p.Value);
+                }
+            }
+
+            public override string ToString()
+            {
+                return ToString(null);
+            }
+
+            public string ToString(float[] constants)
+            {
+                var stateBlock = Parameters.Cast<Parameter?>().SingleOrDefault(p => p.Value.IsStateBlock);
+                var inputsStr = string.Join(", ", Parameters.Where(p => p.IsInput).Select(p => p.ToString(constants)));
+                var outputsStr = string.Join(", ", Parameters.Where(p => p.IsOutput).Select(p => p.ToString(constants))) +
+                                    (stateBlock.HasValue ? " " + stateBlock.Value.ToString(constants) : "");
+                return $"{Opcode,-34} {inputsStr,-16} => {outputsStr,-16}";
+            }
+        }
+
+        public struct Parameter
+        {
+            public ParameterType Type { get; set; }
+            public ushort Value { get; set; }
+
+            public bool IsInput => IsInputType(Type);
+            public bool IsOutput => IsOutputType(Type);
+            public bool IsStateBlock => Type == ParameterType.StateBlock;
+
+            public Parameter(ParameterType type, ushort value)
+            {
+                Value = value;
+                Type = type;
+            }
+
+            public override string ToString()
+            {
+                return ToString(null);
+            }
+
+            public string ToString(float[] constants)
+            {
+                switch (Type)
+                {
+                    case ParameterType.InputBuffer:
+                    case ParameterType.OutputBuffer:
+                    case ParameterType.InputOutputBuffer:
+                        return $"B{Value}";
+                    case ParameterType.InputScalar:
+                        if ((Value & 0xFF00) == 0x100)
+                        {
+                            goto case ParameterType.InputRegister;
+                        }
+                        else
+                        {
+                            var v = Value & 0xFF;
+                            switch (v)
+                            {
+                                case 0: return "0";
+                                case 1: return "1";
+                                default:
+                                    var index = v - 2;
+                                    return constants == null ?
+                                            $"C{index}" :
+                                            FloatUtil.ToString(constants[index]);
+                            }
+                        }
+                    case ParameterType.InputRegister:
+                    case ParameterType.OutputRegister:
+                        return $"R{Value & 0xFF}";
+                    case ParameterType.InputVariable:
+                        return $"V{Value & 0xFF}";
+                    case ParameterType.StateBlock:
+                        return $"[{Value}]";
+                    case ParameterType.Ignored:
+                        return $"Ignored({Value})";
+                }
+
+                throw new NotImplementedException();
+            }
+
+            public static bool IsInputType(ParameterType Type)
+                => Type == ParameterType.InputBuffer ||
+                   Type == ParameterType.InputRegister ||
+                   Type == ParameterType.InputScalar ||
+                   Type == ParameterType.InputVariable ||
+                   Type == ParameterType.InputOutputBuffer;
+            
+            public static bool IsOutputType(ParameterType Type)
+                => Type == ParameterType.OutputBuffer ||
+                   Type == ParameterType.OutputRegister ||
+                   Type == ParameterType.InputOutputBuffer;
+        }
+
+        public enum ParameterType
+        {
+            InputBuffer,
+            InputRegister,
+            InputScalar,
+            InputVariable,
+            OutputBuffer,
+            OutputRegister,
+            InputOutputBuffer,
+            StateBlock,
+            Ignored,
+        }
+
+        public enum Opcode : byte
+        {
+            COPY_BUFFER = 0x00,
+            COPY_REGISTER = 0x01,
+            CONVERT_BUFFER_TO_DENORMALIZED = 0x02,
+            CONVERT_SCALAR_TO_DENORMALIZED = 0x03,
+            CONVERT_BUFFER_TO_NORMALIZED = 0x04,
+            CONVERT_SCALAR_TO_NORMALIZED = 0x05,
+            FIRST_OF_BUFFER = 0x06,
+            MULTIPLY_BUFFER_BUFFER = 0x07,
+            MULTIPLY_BUFFER_SCALAR = 0x08,
+            MULTIPLY_SCALAR_SCALAR = 0x09,
+            SUM_BUFFER_BUFFER = 0x0A,
+            SUM_BUFFER_SCALAR = 0x0B,
+            SUM_SCALAR_SCALAR = 0x0C,
+            SUBTRACT_BUFFER_BUFFER = 0x0D,
+            SUBTRACT_BUFFER_SCALAR = 0x0E,
+            SUBTRACT_SCALAR_BUFFER = 0x0F,
+            SUBTRACT_SCALAR_SCALAR = 0x10,
+            DIVIDE_BUFFER_BUFFER = 0x11,
+            DIVIDE_BUFFER_SCALAR = 0x12,
+            DIVIDE_SCALAR_SCALAR = 0x13,
+            RESCALE_BUFFER_BUFFER = 0x14,
+            RESCALE_BUFFER_SCALAR = 0x15,
+            RESCALE_SCALAR_SCALAR = 0x16,
+            HARD_KNEE_BUFFER = 0x17,
+            HARD_KNEE_SCALAR_SCALAR = 0x18,
+            NOISE = 0x19,
+            RANDOM = 0x1A,
+            ABS_BUFFER = 0x1B,
+            ABS_SCALAR = 0x1C,
+            FLOOR_BUFFER = 0x1D,
+            FLOOR_SCALAR = 0x1E,
+            CEIL_BUFFER = 0x1F,
+            CEIL_SCALAR = 0x20,
+            ROUND_BUFFER = 0x21,
+            ROUND_SCALAR = 0x22,
+            SIGN_BUFFER = 0x23,
+            SIGN_SCALAR = 0x24,
+            MODULO_BUFFER = 0x25,
+            MODULO_SCALAR = 0x26,
+            POW_SCALAR = 0x27,
+            POW_BUFFER = 0x28,
+            MAX_SCALAR = 0x29,
+            MAX_BUFFER = 0x2A,
+            COMPRESS_BUFFER = 0x2B,
+            _UNUSED_2C = 0x2C, // the game doesn't handle this opcode
+            LERP_BUFFER = 0x2D,
+            LERP_BUFFER_2 = 0x2E,
+            LERP_SCALAR = 0x2F,
+            HARD_CLIP_BUFFER_BUFFER = 0x30,
+            HARD_CLIP_BUFFER_SCALAR = 0x31,
+            HARD_CLIP_SCALAR_SCALAR = 0x32,
+            SOFT_CLIP_BUFFER_BUFFER = 0x33,
+            SOFT_CLIP_BUFFER_SCALAR = 0x34,
+            SOFT_CLIP_SCALAR_SCALAR = 0x35,
+            ENVELOPE_FOLLOWER_BUFFER = 0x36,
+            ENVELOPE_FOLLOWER_SCALAR = 0x37,
+            BiquadCoefficients_LowPass_1 = 0x38,
+            BiquadCoefficients_HighPass_1 = 0x39,
+            BiquadCoefficients_BandPass = 0x3A,
+            BiquadCoefficients_BandStop = 0x3B,
+            BiquadCoefficients_LowPass_2 = 0x3C,
+            BiquadCoefficients_HighPass_2 = 0x3D,
+            BiquadCoefficients_PeakingEQ = 0x3E,
+            BiquadProcess_2Pole = 0x3F,
+            BiquadProcess_4Pole = 0x40,
+            OnePole_LPF_BUFFER_BUFFER = 0x41,
+            OnePole_LPF_BUFFER_SCALAR = 0x42,
+            OnePole_LPF_SCALAR_SCALAR = 0x43,
+            OnePole_HPF_BUFFER_BUFFER = 0x44,
+            OnePole_HPF_BUFFER_SCALAR = 0x45,
+            OnePole_HPF_SCALAR_SCALAR = 0x46,
+            OSC_RAMP_BUFFER_BUFFER = 0x47,
+            OSC_RAMP_BUFFER_SCALAR = 0x48,
+            OSC_RAMP_SCALAR = 0x49,
+            SINE_BUFFER = 0x4A,
+            SINE = 0x4B,
+            COSINE_BUFFER = 0x4C,
+            COSINE = 0x4D,
+            TRIANGLE_BUFFER = 0x4E,
+            TRIANGLE = 0x4F,
+            SQUARE_BUFFER = 0x50,
+            SQUARE = 0x51,
+            SAW_BUFFER = 0x52,
+            SAW = 0x53,
+            TRIGGER_LATCH = 0x54,
+            // R = release type, T = trigger mode
+            ENVELOPE_GEN__R_LINEAR_T_INTERRUPTIBLE = 0x55,  // R = 0, T = 2
+            ENVELOPE_GEN__R_LINEAR_T_ONE_SHOT = 0x56,       // R = 0, T = 0
+            ENVELOPE_GEN__R_LINEAR_T_RETRIGGER = 0x57,      // R = 0, T = 1
+            ENVELOPE_GEN__R_EXP_T_INTERRUPTIBLE = 0x58,     // R = 1, T = 2
+            ENVELOPE_GEN__R_EXP_T_ONE_SHOT = 0x59,          // R = 1, T = 0
+            ENVELOPE_GEN__R_EXP_T_RETRIGGER = 0x5A,         // R = 1, T = 1
+            // T = trigger mode
+            TIMED_TRIGGER__T_INTERRUPTIBLE = 0x5B,  // T = 2
+            TIMED_TRIGGER__T_ONE_SHOT = 0x5C,       // T = 0
+            TIMED_TRIGGER__T_RETRIGGER = 0x5D,      // T = 1
+            READ_VARIABLE = 0x5E,
+            STOP = 0x5F,
+            READ_INPUT_BUFFER0 = 0x60,
+            READ_INPUT_BUFFER1 = 0x61,
+            READ_INPUT_BUFFER2 = 0x62,
+            READ_INPUT_BUFFER3 = 0x63,
+            READ_INPUT_BUFFER4 = 0x64,
+            READ_INPUT_BUFFER5 = 0x65,
+            READ_INPUT_BUFFER6 = 0x66,
+            READ_INPUT_BUFFER7 = 0x67,
+            NOTE_TO_FREQUENCY_SCALAR = 0x68,
+            NOTE_TO_FREQUENCY_BUFFER = 0x69,
+            SAMPLE_AND_HOLD = 0x6A,
+            DECIMATE_BUFFER = 0x6B,
+            COUNTER = 0x6C,
+            COUNTER_TRIGGER = 0x6D,
+            GATE_BUFFER_BUFFER = 0x6E,
+            GATE_BUFFER_SCALAR = 0x6F,
+            GATE_SCALAR_SCALAR = 0x70,
+            SMALL_DELAY_FRAC = 0x71,
+            SMALL_DELAY_NON_INTERP = 0x72,
+            SMALL_DELAY_FRAC_FEEDBACK = 0x73,
+            SMALL_DELAY_NON_INTERP_FEEDBACK = 0x74,
+            TRIGGER_DIFF = 0x75,
+            RANDOM_ON_INIT = 0x76,
+            FILL_BUFFER = 0x77,
+            AWProcess = 0x78,
+            LERP_BUFFER_BUFFER = 0x79,
+            BiquadCoefficients_HighSelf_1 = 0x7A,
+            BiquadCoefficients_HighSelf_2 = 0x7B,
+            BiquadCoefficients_LowSelf_1 = 0x7C,
+            BiquadCoefficients_LowSelf_2 = 0x7D,
+            SWITCH_NORM_BUFFER = 0x7E,
+            SWITCH_INDEX_BUFFER = 0x7F,
+            SWITCH_LERP_BUFFER = 0x80,
+            SWITCH_EQUAL_POWER_BUFFFER = 0x81,
+            SWITCH_NORM_SCALAR = 0x82,
+            SWITCH_INDEX_SCALAR = 0x83,
+            SWITCH_LERP_SCALAR = 0x84,
+            SWITCH_EQUAL_POWER_SCALAR = 0x85,
+            AllpassProcess_BUFFER_SCALAR = 0x86,
+            AllpassProcess_BUFFER_BUFFER = 0x87,
+
+            FINISH = 0xFF,
         }
     }
 

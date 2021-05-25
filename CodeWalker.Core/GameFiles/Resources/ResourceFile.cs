@@ -44,7 +44,7 @@ namespace CodeWalker.GameFiles
 
         // structure data
         public uint FileVFT { get; set; }
-        public uint FileUnknown { get; set; }
+        public uint FileUnknown { get; set; } = 1;
         public ulong FilePagesInfoPointer { get; set; }
 
         // reference data
@@ -96,7 +96,7 @@ namespace CodeWalker.GameFiles
     {
         public override long BlockLength
         {
-            get { return 20; }
+            get { return 20 + (256 * 16); }
         }
 
         // structure data
@@ -136,6 +136,9 @@ namespace CodeWalker.GameFiles
             writer.Write(this.Unknown_Ah);
             writer.Write(this.Unknown_Ch);
             writer.Write(this.Unknown_10h);
+
+            var pad = 256 * 16;
+            writer.Write(new byte[pad]);
         }
 
         public override string ToString()

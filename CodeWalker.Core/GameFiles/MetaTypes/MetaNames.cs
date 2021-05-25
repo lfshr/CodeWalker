@@ -3548,7 +3548,7 @@ namespace CodeWalker.GameFiles
 
         exportcamera = 962998194, //cutscene related stuff
 
-
+        loop = 1281572103, //found in AWCs GranularLoop
 
 
 
@@ -3870,9 +3870,38 @@ namespace CodeWalker.GameFiles
         weather_wind_foliage = 480273725,
 
 
+        // particles ShaderVars names from Siprus
+        diffusetex2 = 234123336,
+        softnesscurve = 415919122,
+        directionalmult = 1250560552,
+        normalmapmult = 2008564461,
+        superalpha = 2445226024,
+        normalspecmap = 3009619921,
+        normalarc = 3063280732,
+        shadowamount = 3218705437,
+        refractionmap = 3749494808,
+        camerabias = 4030385036,
+        ambientmult = 4164128389,
+        softnessshadowoffset = 2810291083,
+        softnessshadowmult = 341373563,
+        extralightmult = 3338535754,
+        camerashrink = 2170767496,
 
 
-
+        //AWC markers names from Siprus
+        tank_jump = 322089989,
+        tank_weapon_main_cannon_hit = 2054994489,
+        tank_jump_land = 2326210279,
+        tank_turret_move = 3770661529,
+        tempo = 2051628467,
+        beat = 3902465932,
+        dj = 148611320,
+        //01 = 2740850834,//this one added in RpfManager.BuildBaseJenkIndex
+        rockout = 4078653290,
+        uihit = 3632555010,//is this right?
+        r_p = 295134840,//is this right?
+        g_s = 349722558,//is this right?
+        m_p = 2304294116,//is this right?
 
 
 

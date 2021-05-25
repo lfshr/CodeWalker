@@ -62,6 +62,11 @@ namespace CodeWalker.GameFiles
                 YndFile ynd = RpfFile.GetFile<YndFile>(e, data);
                 return GetXml(ynd, out filename);
             }
+            else if (fnl.EndsWith(".ynv"))
+            {
+                YnvFile ynv = RpfFile.GetFile<YnvFile>(e, data);
+                return GetXml(ynv, out filename);
+            }
             else if (fnl.EndsWith(".ycd"))
             {
                 YcdFile ycd = RpfFile.GetFile<YcdFile>(e, data);
@@ -101,6 +106,21 @@ namespace CodeWalker.GameFiles
             {
                 YldFile yld = RpfFile.GetFile<YldFile>(e, data);
                 return GetXml(yld, out filename, outputfolder);
+            }
+            else if (fnl.EndsWith(".awc"))
+            {
+                AwcFile awc = RpfFile.GetFile<AwcFile>(e, data);
+                return GetXml(awc, out filename, outputfolder);
+            }
+            else if (fnl.EndsWith("cache_y.dat"))
+            {
+                CacheDatFile cdf = RpfFile.GetFile<CacheDatFile>(e, data);
+                return GetXml(cdf, out filename, outputfolder);
+            }
+            else if (fnl.EndsWith(".dat") && fnl.StartsWith("heightmap"))
+            {
+                HeightmapFile hmf = RpfFile.GetFile<HeightmapFile>(e, data);
+                return GetXml(hmf, out filename, outputfolder);
             }
             filename = fn;
             return string.Empty;
@@ -167,6 +187,12 @@ namespace CodeWalker.GameFiles
             filename = fn + ".xml";
             return YndXml.GetXml(ynd);
         }
+        public static string GetXml(YnvFile ynv, out string filename)
+        {
+            var fn = (ynv?.RpfFileEntry?.Name) ?? "";
+            filename = fn + ".xml";
+            return YnvXml.GetXml(ynv);
+        }
         public static string GetXml(YcdFile ycd, out string filename)
         {
             var fn = (ycd?.RpfFileEntry?.Name) ?? "";
@@ -214,6 +240,24 @@ namespace CodeWalker.GameFiles
             var fn = (yld?.Name) ?? "";
             filename = fn + ".xml";
             return YldXml.GetXml(yld, outputfolder);
+        }
+        public static string GetXml(AwcFile awc, out string filename, string outputfolder)
+        {
+            var fn = (awc?.Name) ?? "";
+            filename = fn + ".xml";
+            return AwcXml.GetXml(awc, outputfolder);
+        }
+        public static string GetXml(CacheDatFile cdf, out string filename, string outputfolder)
+        {
+            var fn = (cdf?.FileEntry?.Name) ?? "";
+            filename = fn + ".xml";
+            return cdf.GetXml();
+        }
+        public static string GetXml(HeightmapFile hmf, out string filename, string outputfolder)
+        {
+            var fn = (hmf?.Name) ?? "";
+            filename = fn + ".xml";
+            return HmapXml.GetXml(hmf);
         }
 
 
@@ -1273,7 +1317,7 @@ namespace CodeWalker.GameFiles
                     { }
                     var arrFloat = new Array_float(arrStruc.Pointer, arrStruc.Count1); //block type 7
                     var floatArr = PsoTypes.GetFloatArray(cont.Pso, arrFloat);
-                    WriteRawArray(sb, floatArr, indent, ename, "float");
+                    WriteRawArray(sb, floatArr, indent, ename, "float", FloatUtil.ToString);
                     break;
                 case PsoDataType.UShort:
                     if (embedded)
@@ -1771,12 +1815,14 @@ namespace CodeWalker.GameFiles
             sb.Append(">");
             if (appendLine) sb.AppendLine();
         }
-        public static void ValueTag(StringBuilder sb, int indent, string name, string val)
+        public static void ValueTag(StringBuilder sb, int indent, string name, string val, string attr = "value")
         {
             Indent(sb, indent);
             sb.Append("<");
             sb.Append(name);
-            sb.Append(" value=\"");
+            sb.Append(" ");
+            sb.Append(attr);
+            sb.Append("=\"");
             sb.Append(val);
             sb.Append("\" />");
             sb.AppendLine();
@@ -2079,10 +2125,10 @@ namespace CodeWalker.GameFiles
             XmlDocument doc = new XmlDocument();
             XmlNode node = doc.CreateElement("root");
             node.InnerText = unescaped;
-            var escaped = node.InnerXml;
+            var escaped = node.InnerXml.Replace("\"", "&quot;");
             if (escaped != unescaped)
             { }
-            return node.InnerXml;
+            return escaped;
         }
 
 
@@ -2114,14 +2160,17 @@ namespace CodeWalker.GameFiles
         CacheFile = 4,
         AudioRel = 5,
         Ynd = 6,
-        Ycd = 7,
-        Ybn = 8,
-        Ytd = 9,
-        Ydr = 10,
-        Ydd = 11,
-        Yft = 12,
-        Ypt = 13,
-        Yld = 14,
+        Ynv = 7,
+        Ycd = 8,
+        Ybn = 9,
+        Ytd = 10,
+        Ydr = 11,
+        Ydd = 12,
+        Yft = 13,
+        Ypt = 14,
+        Yld = 15,
+        Awc = 16,
+        Heightmap = 17,
     }
 
 }
